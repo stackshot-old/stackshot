@@ -3,11 +3,13 @@ import {connect} from 'react-redux'
 import {
   View,
   Text,
-  Navigator
+  Navigator,
+  DrawerLayoutAndroid
 } from 'react-native';
 
 // views
 import Home from './Home';
+import {SliderScreen} from '../components'
 
 @connect(
   state => ({})
@@ -25,9 +27,14 @@ export default class Routes extends Component {
     return <View />;
   }
 
+
   render() {
     return (
-      <View style={{flex: 1}}>
+      <DrawerLayoutAndroid
+        ref={drawer=> {this.drawer = drawer}}
+        drawerWidth={260}
+        drawerPosition={DrawerLayoutAndroid.positions.left}
+        renderNavigationView={() => <SliderScreen navigator={this.navigator}/>}>
         <Navigator
           ref={navigator => {this.navigator = navigator;}} // eslint-disable-line
           renderScene={this.renderScene}
@@ -35,7 +42,7 @@ export default class Routes extends Component {
           initialRoute={{
             name: 'home'
           }} />
-      </View>
+      </DrawerLayoutAndroid>
     );
   }
 }

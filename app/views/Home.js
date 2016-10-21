@@ -40,7 +40,7 @@ export default class Home extends Component {
           ]}
           title="图槽"
           titleColor="#fff"
-          style={[styles.toolbar, {backgroundColor:activeTheme }]}
+          style={[styles.toolbar, {backgroundColor:`rgb(${activeTheme})` }]}
           />
           <HomeShots />
       </View>
