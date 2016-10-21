@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux'
 import {
   View,
   Text,
@@ -8,12 +9,15 @@ import {
 // views
 import Home from './Home';
 
+@connect(
+  state => ({})
+)
 export default class Routes extends Component {
   renderScene = (route, navigator) => {
     if (route.name) {
       switch (route.name) {
         case 'home' :
-          return <Home navigator={navigator} route={route} />;
+          return <Home navigator={navigator} {...route.param} />;
         default:
           return <View />;
       }

@@ -1,27 +1,37 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {
   View,
   Text,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // Components
-import HomeShots from '../components/HomeShots';
+import {HomeShots, StatusBar} from '../components';
 
 const styles = StyleSheet.create({
   toolbar: {
     height: 55,
-    backgroundColor: '#f25d8e',
     justifyContent: 'center',
   }
 });
 
+@connect(
+  state => {
+    const {theme: {activeTheme}} = state
+    return {
+      activeTheme
+    }
+  }
+)
 export default class Home extends Component {
   render() {
+    const {activeTheme} = this.props
     return (
       <View style={{flex: 1}}>
+        <StatusBar/>
         <Icon.ToolbarAndroid
           navIconName="menu"
           // onActionSelected={() => this.handleSearch()}
@@ -30,7 +40,7 @@ export default class Home extends Component {
           ]}
           title="图槽"
           titleColor="#fff"
-          style={styles.toolbar}
+          style={[styles.toolbar, {backgroundColor:activeTheme }]}
           />
           <HomeShots />
       </View>
