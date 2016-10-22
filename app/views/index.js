@@ -9,7 +9,7 @@ import {
 
 // views
 import Home from './Home';
-import {SliderScreen} from '../components'
+import {SliderScreen, ToolBar} from '../components'
 
 @connect(
   state => ({})
@@ -35,6 +35,7 @@ export default class Routes extends Component {
         drawerWidth={260}
         drawerPosition={DrawerLayoutAndroid.positions.left}
         renderNavigationView={() => <SliderScreen navigator={this.navigator}/>}>
+        <ToolBar />
         <Navigator
           ref={navigator => {this.navigator = navigator;}} // eslint-disable-line
           renderScene={this.renderScene}

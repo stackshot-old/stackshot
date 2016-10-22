@@ -35,22 +35,23 @@ export default class SliderScreen extends Component {
   }
 
   render() {
-    const {activeIndex, activeTheme} = this.state
+    const {activeIndex} = this.state
+    const {activeTheme} = this.props
     return (
-      <View>
+      <View style={styles.Container}>
         <View style={styles.SliderHD}>
           <Avatar source={{uri: 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
           <Text>Miku</Text>
         </View>
         <View style={styles.SliderMD}>
-          <Item icon='mood' text="我的图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>
-          <Item icon='mood' text="资料设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
-          <Item icon='mood' text="主题切换" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} activeTheme={activeTheme}/>
-          <Item icon='mood' text="系统设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={3} activeTheme={activeTheme}/>
-          <Item icon='mood' text="关于图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={4} activeTheme={activeTheme}/>
+          <Item icon='favorite' text="我的图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>
+          <Item icon='person' text="资料设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
+          <Item icon='color-lens' text="主题切换" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} activeTheme={activeTheme}/>
+          <Item icon='settings' text="系统设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={3} activeTheme={activeTheme}/>
+          <Item icon='info' text="关于图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={4} activeTheme={activeTheme}/>
         </View>
         <View style={styles.SliderFT}>
-
+          <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
         </View>
       </View>
     )
@@ -59,9 +60,6 @@ export default class SliderScreen extends Component {
 
 class Item extends Component {
 
-  static defaultProps = {
-    activeTheme: '250,114,131'
-  }
   onPress = () => {
     const {index, handleSelected} = this.props
     handleSelected(index)
@@ -71,6 +69,8 @@ class Item extends Component {
     const {icon, text, ouTouch, index, activeIndex, activeTheme} = this.props
     return (
       <TouchableNativeFeedback
+        delayPressIn={50}
+        background={TouchableNativeFeedback.Ripple(`rgb(${activeTheme})`)}
         style={[styles.TouchItem]}
         onPress={() => this.onPress()}>
         <View style={[styles.ItemView,{backgroundColor: activeIndex === index ? `rgba(${activeTheme}, 0.1)` : 'transparent'}]}>
@@ -86,6 +86,9 @@ class Item extends Component {
 
 
 const styles = StyleSheet.create({
+  Container:{
+    flex: 1,
+  },
   SliderHD:{
     flexDirection: 'column',
     alignItems: 'center'
@@ -95,11 +98,15 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   SliderFT:{
+    padding: 15,
+    flexDirection: 'column',
+    position: 'absolute',
+    bottom: 40
   },
   TouchItem: {
     flex: 1,
 		height: 45,
-		justifyContent: "center",
+		justifyContent: "center"
   },
   ItemView:{
     padding: 15,

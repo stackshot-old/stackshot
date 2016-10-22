@@ -32,17 +32,7 @@ export default class Home extends Component {
     return (
       <View style={{flex: 1}}>
         <StatusBar/>
-        <Icon.ToolbarAndroid
-          navIconName="menu"
-          // onActionSelected={() => this.handleSearch()}
-          actions={[
-            {title: 'search', iconName: 'search', show: 'always'}
-          ]}
-          title="图槽"
-          titleColor="#fff"
-          style={[styles.toolbar, {backgroundColor:`rgb(${activeTheme})` }]}
-          />
-          <HomeShots />
+        <HomeShots />
       </View>
     );
   }
