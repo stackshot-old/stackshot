@@ -3,7 +3,9 @@ import { combineReducers } from 'redux'
 
 import paginate from './paginate'
 import entities from './entities'
+import comment from './comment'
 import theme from './theme'
+import shot from './shot'
 
 
 const pagination = combineReducers({
@@ -20,5 +22,7 @@ const pagination = combineReducers({
 export default combineReducers({
   pagination,
   entities,
-  theme
+  comment,
+  theme,
+  shot
 })

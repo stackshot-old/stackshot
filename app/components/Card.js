@@ -5,14 +5,25 @@ import {
   Image,
   Text,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  LayoutAnimation
 } from 'react-native'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import {Button} from '../components'
+import {handleActionChange} from '../actions'
 
-const width = Dimensions.get('window').width
-let imgWidth = width - 20
-
+@connect(
+  state => {
+    const {theme: {activeTheme}} = state
+    return {
+      activeTheme
+    }
+  },
+  dispatch => bindActionCreators({handleActionChange}, dispatch)
+)
 export default class Card extends Component {
   static propTypes = {
     item: PropTypes.shape({
@@ -31,16 +42,25 @@ export default class Card extends Component {
     super(props)
   }
 
+  handleComment(){
+    const {handleActionChange} = this.props
+    LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
+    handleActionChange('comment',{ isComment: true})
+  }
+
   render() {
     const { item, activeTheme } = this.props
-    const {image, height, uper} = item
+    const {image, width, height, uper} = item
     const {name, avatar} = uper
+
+    let ScreenWidth = Dimensions.get('window').width
+    let imgWidth = ScreenWidth - 20
 
     return (
       <View style={styles.card}>
         <Image
           source={{uri: image}}
-          style={{width: imgWidth, height: imgWidth * (imgWidth / height) , borderRadius: 4}}
+          style={{width: imgWidth, height: ScreenWidth / (width / height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
         />
       <View style={styles.cardMD}>
         <Image source={{uri: avatar}} style={styles.avatar} />
@@ -50,13 +70,13 @@ export default class Card extends Component {
             <Text style={[{fontSize: 12, color: 'rgb(153, 157, 175)'}]}>刚刚</Text>
             </View>
           <View style={styles.cardRGMD}>
-            <Text> {"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.".substring(0,200)}...</Text>
+            <Text numberOfLines={4}> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Text>
           </View>
           <View style={styles.cardRGFT}>
             <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>0人点赞</Text>
             <View style={styles.cardRGFTRG}>
               <Button icon={<Icon name="favorite"/>} label="点赞" onPress={() => {Alert.alert('点赞')}}/>
-              <Button active={true} icon={<Icon name="favorite"/>} label="评论" onPress={()=> {Alert.alert('评论')}}/>
+              <Button active={true} icon={<Icon name="favorite"/>} label="评论" onPress={::this.handleComment}/>
             </View>
           </View>
         </View>
@@ -90,7 +110,7 @@ const styles = StyleSheet.create({
   },
   cardRG: {
     flex: 1,
-    marginHorizontal: 10,
+    marginLeft: 10,
     flexDirection: 'column',
     justifyContent: 'space-between'
   },

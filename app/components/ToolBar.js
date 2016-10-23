@@ -43,7 +43,7 @@ export default class ToolBar extends Component {
           <Item icon='explore' text="发现" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
           <Item icon='textsms' text="消息" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} activeTheme={activeTheme}/>
         </View>
-        <Icon name="search" color="rgb(151,176,200)" size={30} style={styles.Search}/>
+        <Icon name="search" color="rgb(151,176,200)" size={25} style={styles.Search}/>
       </View>
     )
   }
@@ -100,6 +100,6 @@ const styles = StyleSheet.create({
   Search: {
     position: 'absolute',
     right: 10,
-    top: 15
+    top: 16
   }
 })

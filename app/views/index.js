@@ -4,17 +4,23 @@ import {
   View,
   Text,
   Navigator,
+  UIManager,
   DrawerLayoutAndroid
 } from 'react-native';
 
 // views
 import Home from './Home';
-import {SliderScreen, ToolBar} from '../components'
+import {SliderScreen} from '../components'
 
 @connect(
   state => ({})
 )
 export default class Routes extends Component {
+
+  componentWillMount() {
+		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
+	}
+
   renderScene = (route, navigator) => {
     if (route.name) {
       switch (route.name) {
@@ -35,7 +41,6 @@ export default class Routes extends Component {
         drawerWidth={260}
         drawerPosition={DrawerLayoutAndroid.positions.left}
         renderNavigationView={() => <SliderScreen navigator={this.navigator}/>}>
-        <ToolBar />
         <Navigator
           ref={navigator => {this.navigator = navigator;}} // eslint-disable-line
           renderScene={this.renderScene}

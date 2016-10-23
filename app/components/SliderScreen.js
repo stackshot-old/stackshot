@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  ScrollView,
   TouchableNativeFeedback
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -38,6 +39,7 @@ export default class SliderScreen extends Component {
     const {activeIndex} = this.state
     const {activeTheme} = this.props
     return (
+      <ScrollView>
       <View style={styles.Container}>
         <View style={styles.SliderHD}>
           <Avatar source={{uri: 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
@@ -54,6 +56,7 @@ export default class SliderScreen extends Component {
           <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
         </View>
       </View>
+      </ScrollView>
     )
   }
 }
@@ -100,8 +103,7 @@ const styles = StyleSheet.create({
   SliderFT:{
     padding: 15,
     flexDirection: 'column',
-    position: 'absolute',
-    bottom: 40
+    marginTop: 150
   },
   TouchItem: {
     flex: 1,
