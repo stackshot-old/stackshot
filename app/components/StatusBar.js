@@ -22,6 +22,6 @@ export default class MyComponent extends Component {
 
   render() {
     const {activeTheme, backgroundColor} = this.props
-    return <StatusBar backgroundColor={backgroundColor || '#fff'}/>
+    return <StatusBar backgroundColor={backgroundColor || '#fff'} animated={true}/>
   }
 }

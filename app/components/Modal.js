@@ -40,7 +40,7 @@ export default class UiGroup extends Component {
       <View style={[styles.transparent, styles.absolute]} pointerEvents={'box-none'}>
         { isopen &&
           <View style={[styles.wrap, size, style]}>
-            { isopen && <StatusBar backgroundColor={'rgba(0,0,0,0.6)'}/>}
+            { isopen && <StatusBar backgroundColor={'rgba(0,0,0,0.8)'} animated={true}/>}
               { children }
           </View>
         }

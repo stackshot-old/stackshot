@@ -49,7 +49,7 @@ export default class Home extends Component {
     const {activeTheme, isShot, isComment} = this.props
     return (
       <View style={{flex: 1}}>
-        <StatusBar backgroundColor={(isShot || isComment) ? 'rgba(0,0,0,0.6)' : '#fff'} animated={"animated"}/>
+        <StatusBar/>
         <ToolBar />
         <HomeShots />
         <ShotModal />
