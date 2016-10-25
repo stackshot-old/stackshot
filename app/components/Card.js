@@ -6,13 +6,15 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  LayoutAnimation
+  LayoutAnimation,
+  TouchableOpacity,
+  TouchableWithoutFeedback
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import {Button} from '../components'
+import {Button, Avatar} from '../components'
 import {handleActionChange} from '../actions'
 
 @connect(
@@ -42,10 +44,28 @@ export default class Card extends Component {
     super(props)
   }
 
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
+  }
+
   handleComment(){
     const {handleActionChange} = this.props
     LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
     handleActionChange('comment',{ isComment: true})
+  }
+
+  handlePressAvatar(){
+    const {navigator} = this.context.app
+    navigator.push({
+      name: 'user'
+    })
+  }
+
+  handlePressShot(){
+    const {navigator} = this.context.app
+    navigator.push({
+      name: 'shot'
+    })
   }
 
   render() {
@@ -58,12 +78,16 @@ export default class Card extends Component {
 
     return (
       <View style={styles.card}>
-        <Image
-          source={{uri: image}}
-          style={{width: imgWidth, height: ScreenWidth / (width / height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
-        />
+        <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
+          <Image
+            source={{uri: image}}
+            style={{width: imgWidth, height: ScreenWidth / (width / height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
+          />
+        </TouchableWithoutFeedback>
       <View style={styles.cardMD}>
-        <Image source={{uri: avatar}} style={styles.avatar} />
+        <TouchableOpacity onPress={()=> this.handlePressAvatar()}>
+          <Avatar source={{uri: avatar}} style={styles.avatar} />
+        </TouchableOpacity>
         <View style={styles.cardRG}>
           <View style={styles.cardRGHD}>
             <Text style={[{color: `rgb(${activeTheme})`}]}>{name}</Text>
@@ -76,7 +100,7 @@ export default class Card extends Component {
             <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>0人点赞</Text>
             <View style={styles.cardRGFTRG}>
               <Button icon={<Icon name="favorite"/>} label="点赞" onPress={() => {Alert.alert('点赞')}}/>
-              <Button active={true} icon={<Icon name="favorite"/>} label="评论" onPress={::this.handleComment}/>
+              <Button active={true} icon={<Icon name="mode-comment"/>} label="评论" onPress={::this.handleComment}/>
             </View>
           </View>
         </View>
@@ -105,7 +129,7 @@ const styles = StyleSheet.create({
   avatar: {
     height: 30,
     width: 30,
-    borderRadius: 33,
+    borderRadius: 100,
     marginRight: 5
   },
   cardRG: {

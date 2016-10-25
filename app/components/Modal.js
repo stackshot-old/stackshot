@@ -6,7 +6,9 @@ import {
   StatusBar,
   StyleSheet,
   Dimensions,
+  BackAndroid,
   PanResponder,
+  ToastAndroid,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native'
@@ -26,7 +28,7 @@ const screen = Dimensions.get('window')
     }
   }
 )
-export default class UiGroup extends Component {
+export default class Modal extends Component {
   constructor(props) {
     super(props)
   }

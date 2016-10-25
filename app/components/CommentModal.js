@@ -53,7 +53,7 @@ export default class CommentModal extends Component {
   render() {
     const {activeTheme, isComment} = this.props
     return (
-      <Modal isopen={isComment}>
+      <Modal isopen={isComment} onBackPress={() => this.handleBackPress()}>
         <View style={{marginTop: 60, marginHorizontal: 10}}>
           <View style={{backgroundColor:'white' , minHeight: 10, borderTopLeftRadius: 4, borderTopRightRadius:4, paddingHorizontal: 10, paddingVertical: 10}}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

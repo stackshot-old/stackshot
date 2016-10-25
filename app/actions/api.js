@@ -1,13 +1,5 @@
 import { CALL_API, Schemas } from '../middleware/api'
-
-
-export const getHeader = (noAuth) => {
-  let headerInfo = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-  return headerInfo
-}
+import { getHeader } from '../actions'
 
 const loadImageList = (apiRoot, action) => {
   return (query) => {

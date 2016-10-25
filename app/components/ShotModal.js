@@ -53,7 +53,7 @@ export default class ShotModal extends Component {
   render() {
     const {activeTheme, isShot} = this.props
     return (
-      <Modal isopen={isShot}>
+      <Modal isopen={isShot} onBackPress={() => this.handleBackPress()}>
         <View style={{marginTop: 60, marginHorizontal: 10}}>
           <View style={{backgroundColor: `rgb(${activeTheme})`, minHeight: 200, borderTopLeftRadius: 4, borderTopRightRadius:4, paddingHorizontal: 10, paddingVertical: 10}}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

@@ -7,34 +7,55 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {toggleToolbar} from '../actions'
 
 import {Avatar} from '../components'
 
 
 @connect(
   state => {
-    const {theme: {activeTheme}} = state
+    const {
+      theme: {activeTheme},
+      common: {toolbar:{ activeIndex }}
+    } = state
     return {
+      activeIndex,
       activeTheme
     }
-  }
+  },
+  dispatch => bindActionCreators({toggleToolbar}, dispatch)
 )
 export default class ToolBar extends Component {
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props)
-    this.state = {
-      activeIndex: 0
-    }
   }
 
   handleSelected = (index) => {
-    const {navigator} = this.props
-    this.setState({ activeIndex: index })
+    const {navigator} = this.context.app
+    const {toggleToolbar} = this.props
+    toggleToolbar({activeIndex: index})
+    switch (index) {
+      case 0:
+        navigator.replace({ name: 'home'})
+        break
+      case 1:
+        navigator.replace({ name: 'found'})
+        break
+      case 2:
+        navigator.replace({ name: 'message'})
+        break
+      default:
+        return
+    }
   }
 
   render() {
-    const {activeIndex} = this.state
-    const {activeTheme} = this.props
+    const {activeTheme, activeIndex} = this.props
     return (
       <View style={styles.Container}>
         <Avatar source={{uri: 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={40} style={{marginLeft: 10}}/>

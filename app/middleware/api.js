@@ -17,7 +17,8 @@ function getNextPageUrl(response) {
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
 function callApi(endpoint, schema, request) {
-  const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? (API_ROOT + endpoint) : endpoint
+  const fullUrl = endpoint.includes(API_ROOT) ? (API_ROOT + endpoint) : endpoint
+
   return fetch(fullUrl, request)
     .then(response =>
       response.json().then(json => ({ json, response }))
@@ -52,11 +53,16 @@ const imageSchema = new Schema('images', {
   idAttribute: 'image'
 })
 
+const uploadSchema = new Schema('upload', {
+  idAttribute: 'hash'
+})
+
 export const Schemas = {
   USER: userSchema,
   USER_ARRAY: arrayOf(userSchema),
   POST: imageSchema,
   POST_ARRAY: arrayOf(imageSchema),
+  UPLOAD: uploadSchema
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
@@ -108,6 +114,7 @@ export default store => next => action => {
       response
     })),
     error => {
+      console.log(error)
       let message = ''
       if(error.code !== 0 && error.code !== undefined){
         message = error.message

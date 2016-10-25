@@ -3,7 +3,8 @@ import {
   View,
   Text,
   Image,
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity
 } from 'react-native'
 
 export default class Avatar extends Component {
@@ -15,6 +16,11 @@ export default class Avatar extends Component {
   static defaultProps = {
     size: 60,
     mode: 'contain'
+  }
+
+  handlePress = () => {
+    const {checkAuth} = this.context.app
+    checkAuth()
   }
 
   render() {

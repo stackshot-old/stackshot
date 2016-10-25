@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
 import {handleActionChange} from '../actions'
@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 
 // Components
-import {HomeShots, StatusBar, FloatButton, ToolBar, ShotModal, CommentModal} from '../components';
+import {HomeShots, FloatButton, ToolBar, ShotModal, CommentModal} from '../components';
 
 const screen = Dimensions.get('window')
 
@@ -49,7 +49,6 @@ export default class Home extends Component {
     const {activeTheme, isShot, isComment} = this.props
     return (
       <View style={{flex: 1}}>
-        <StatusBar/>
         <ToolBar />
         <HomeShots />
         <ShotModal />
