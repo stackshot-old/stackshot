@@ -3,8 +3,11 @@ import { combineReducers } from 'redux'
 
 import paginate from './paginate'
 import entities from './entities'
+import comment from './comment'
+import common from './common'
 import theme from './theme'
-
+import shot from './shot'
+import auth from './auth'
 
 const pagination = combineReducers({
   allimages: paginate({
@@ -20,5 +23,9 @@ const pagination = combineReducers({
 export default combineReducers({
   pagination,
   entities,
-  theme
+  comment,
+  common,
+  theme,
+  shot,
+  auth
 })

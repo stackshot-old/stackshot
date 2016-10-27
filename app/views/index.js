@@ -1,41 +1,7 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux'
-import {
-  View,
-  Text,
-  Navigator
-} from 'react-native';
-
-// views
-import Home from './Home';
-
-@connect(
-  state => ({})
-)
-export default class Routes extends Component {
-  renderScene = (route, navigator) => {
-    if (route.name) {
-      switch (route.name) {
-        case 'home' :
-          return <Home navigator={navigator} {...route.param} />;
-        default:
-          return <View />;
-      }
-    }
-    return <View />;
-  }
-
-  render() {
-    return (
-      <View style={{flex: 1}}>
-        <Navigator
-          ref={navigator => {this.navigator = navigator;}} // eslint-disable-line
-          renderScene={this.renderScene}
-          configureScene={this.renderConfigure}
-          initialRoute={{
-            name: 'home'
-          }} />
-      </View>
-    );
-  }
-}
+export DashBoard from './DashBoard'
+export Home from './Home'
+export Login from './Login'
+export User from './User'
+export ShotDetail from './ShotDetail'
+export Found from './Found'
+export Message from './Message'
