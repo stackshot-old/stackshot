@@ -1,6 +1,6 @@
 export DashBoard from './DashBoard'
 export Home from './Home'
-export Login from './Login'
+export Signin from './Signin'
 export User from './User'
 export ShotDetail from './ShotDetail'
 export Found from './Found'

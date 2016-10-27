@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {handleActionChange} from '../actions'
 import {
   Alert,
   View,
@@ -13,26 +12,30 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import ImagePicker from 'react-native-image-crop-picker'
+import RNFetchBlob from 'react-native-fetch-blob'
+import {API_ROOT} from '../middleware/api'
 // Components
-import { FloatButton, Modal} from '../components';
+import { FloatButton, Modal} from '../components'
+import {handleActionChange, upLoadShot} from '../actions'
 
 const screen = Dimensions.get('window')
 
 @connect(
   state => {
     const {
+      auth:{user},
       theme: {activeTheme},
       shot: {isShot}
     } = state
     return {
       activeTheme,
-      isShot
+      isShot,
+      user
     }
   },
-  dispatch => bindActionCreators({handleActionChange},dispatch)
+  dispatch => bindActionCreators({handleActionChange, upLoadShot},dispatch)
 )
 export default class ShotModal extends Component {
 
@@ -46,8 +49,22 @@ export default class ShotModal extends Component {
     alert('sending.....')
   }
 
-  handleUpLoad(){
-    alert('uploading....')
+  async handleUpLoad(){
+    const {user:{token}, upLoadShot} = this.props
+    const image = await ImagePicker.openPicker({
+      width: 1600,
+      height: 900,
+      cropping: true,
+    })
+    const {path, mime} = image
+    const upload = await RNFetchBlob.fetch('PUT', `${API_ROOT}/media/upload_image`, {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    },[{ name:'image', filename: 'image.png',type: mime, data: RNFetchBlob.wrap(path)}])
+    .uploadProgress({ interval : 250 }, (written, total) => {
+
+    })
+    console.log(upload)
   }
 
   render() {

@@ -9,7 +9,7 @@ export const signin = (data) => {
   return {
     [CALL_API]: {
       types: [ SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE ],
-      endpoint: 'http://192.168.5.7:7999/auth/signin',
+      endpoint: '/auth/signin',
       schema: {user: Schemas.USER},
       request: {
         method: 'POST',
@@ -29,7 +29,7 @@ export const signup = (data) => {
   return {
     [CALL_API]: {
       types: [ SIGNIN_REQUEST, SIGNIN_SUCCESS, SIGNIN_FAILURE ],
-      endpoint: 'http://192.168.5.7:7999/auth/signup',
+      endpoint: '/auth/signup',
       schema: {user: Schemas.USER},
       request: {
         method: 'POST',

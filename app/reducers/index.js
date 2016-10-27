@@ -17,6 +17,14 @@ const pagination = combineReducers({
       ActionTypes.POST_LIST_SUCCESS,
       ActionTypes.POST_LIST_FAILURE,
     ]
+  }),
+  allshots: paginate({
+    mapActionToKey: action => action.query,
+    types: [
+      ActionTypes.GET_SHOTS_REQUEST,
+      ActionTypes.GET_SHOTS_SUCCESS,
+      ActionTypes.GET_SHOTS_FAILURE,
+    ]
   })
 })
 

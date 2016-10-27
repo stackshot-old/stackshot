@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
   TouchableNativeFeedback
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -13,16 +14,21 @@ import {connect} from 'react-redux'
 
 @connect(
   state => {
-    const {theme: {activeTheme}} = state
+    const {
+      auth: {user},
+      theme: {activeTheme}
+    } = state
     return {
-      activeTheme
+      activeTheme,
+      user
     }
   }
 )
 export default class SliderScreen extends Component {
-  static propTypes = {
-    navigator: PropTypes.object,
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
   }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -35,15 +41,28 @@ export default class SliderScreen extends Component {
     this.setState({ activeIndex: index })
   }
 
+  handlePressAvatar = () => {
+    const {checkAuth, navigator, drawer} = this.context.app
+    if(checkAuth()){
+      drawer.closeDrawer()
+      navigator.push({
+        name: 'user'
+      })
+    }
+  }
+
   render() {
     const {activeIndex} = this.state
-    const {activeTheme} = this.props
+    const {activeTheme, user} = this.props
+    const {username, avatar} = user
     return (
       <ScrollView>
       <View style={styles.Container}>
         <View style={styles.SliderHD}>
-          <Avatar source={{uri: 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
-          <Text>Miku</Text>
+          <TouchableOpacity onPress={() => this.handlePressAvatar()}>
+            <Avatar source={{uri: avatar ? avatar : 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
+          </TouchableOpacity>
+          <Text>{username ? username : 'Miku'}</Text>
         </View>
         <View style={styles.SliderMD}>
           <Item icon='favorite' text="我的图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>

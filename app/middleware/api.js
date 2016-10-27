@@ -2,11 +2,12 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-const API_ROOT = process.env.NODE_ENV === 'production' ? '' : ''
+export const API_ROOT = `http://192.168.10.124:7999`
 
 
 // Extracts the next page URL from Github API response.
 function getNextPageUrl(response) {
+  console.log(response)
   let link      = response.headers.get('link')
   let nextLink  = link ? link.split(',').find(s => s.indexOf('rel="next"') > -1) : null
 
@@ -17,7 +18,7 @@ function getNextPageUrl(response) {
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
 function callApi(endpoint, schema, request) {
-  const fullUrl = endpoint.includes(API_ROOT) ? (API_ROOT + endpoint) : endpoint
+  const fullUrl = endpoint.includes(API_ROOT) ? endpoint : (API_ROOT + endpoint)
 
   return fetch(fullUrl, request)
     .then(response =>
@@ -57,12 +58,24 @@ const uploadSchema = new Schema('upload', {
   idAttribute: 'hash'
 })
 
+const shotSchema = new Schema('shots', {
+  idAttribute: 'id'
+})
+
+shotSchema.define({
+  images: arrayOf(imageSchema),
+  user: userSchema
+})
+
+
 export const Schemas = {
   USER: userSchema,
   USER_ARRAY: arrayOf(userSchema),
   POST: imageSchema,
   POST_ARRAY: arrayOf(imageSchema),
-  UPLOAD: uploadSchema
+  UPLOAD: uploadSchema,
+  SHOT: shotSchema,
+  SHOT_ARRAY: arrayOf(shotSchema)
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.

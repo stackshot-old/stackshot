@@ -18,27 +18,20 @@ import {Button, Avatar} from '../components'
 import {handleActionChange} from '../actions'
 
 @connect(
-  state => {
-    const {theme: {activeTheme}} = state
+  (state, props) => {
+    const {
+      entities: {users},
+      theme: {activeTheme}
+    } = state
+    const {item:{user}} = props
     return {
+      user: users[user],
       activeTheme
     }
   },
   dispatch => bindActionCreators({handleActionChange}, dispatch)
 )
 export default class Card extends Component {
-  static propTypes = {
-    item: PropTypes.shape({
-      image: PropTypes.string.isRequired,
-      uper: PropTypes.shape({
-        avatar: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      height: PropTypes.number.isRequired,
-      width: PropTypes.number.isRequired,
-    }),
-    activeTheme: PropTypes.string,
-  }
 
   constructor(props) {
     super(props)
@@ -69,28 +62,29 @@ export default class Card extends Component {
   }
 
   render() {
-    const { item, activeTheme } = this.props
-    const {image, width, height, uper} = item
-    const {name, avatar} = uper
+    const {user, image, activeTheme} = this.props
+    const { username, avatar } = user
 
     let ScreenWidth = Dimensions.get('window').width
     let imgWidth = ScreenWidth - 20
 
     return (
       <View style={styles.card}>
-        <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
-          <Image
-            source={{uri: image}}
-            style={{width: imgWidth, height: ScreenWidth / (width / height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
-          />
-        </TouchableWithoutFeedback>
+        {image &&
+          <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
+              <Image
+                source={{uri: image}}
+                style={{width: imgWidth, height: ScreenWidth / (width / height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
+              />
+          </TouchableWithoutFeedback>
+        }
       <View style={styles.cardMD}>
         <TouchableOpacity onPress={()=> this.handlePressAvatar()}>
           <Avatar source={{uri: avatar}} style={styles.avatar} />
         </TouchableOpacity>
         <View style={styles.cardRG}>
           <View style={styles.cardRGHD}>
-            <Text style={[{color: `rgb(${activeTheme})`}]}>{name}</Text>
+            <Text style={[{color: `rgb(${activeTheme})`}]}>{username}</Text>
             <Text style={[{fontSize: 12, color: 'rgb(153, 157, 175)'}]}>刚刚</Text>
             </View>
           <View style={styles.cardRGMD}>

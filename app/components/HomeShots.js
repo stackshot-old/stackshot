@@ -8,28 +8,32 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {loadGithubList} from '../actions'
+import {getShots} from '../actions'
 
+import {obj2query} from '../utils'
 import {List, Card} from '../components'
 
 @connect(
   state => {
     const {
-      pagination: { allimages },
-      entities: {images},
+      pagination: { allshots },
+      entities: {shots},
       theme: {activeTheme}
     } = state
-    const query = 'egoist/703a7691cbaabb6349707ef51497764b/raw/b033d130300dca2ead3179d6144e3dfc0bcf7692/fake.json'
-    const postsPagination = allimages[query] || { ids: [] }
-    const relatedImage  = postsPagination.ids.map(id => images[id]);
+
+    const query = obj2query({
+      limit: 10
+    })
+    const postsPagination = allshots[query] || { ids: [] }
+    const relatedShot  = postsPagination.ids.map(id => shots[id]);
 
     return {
       activeTheme,
-      relatedImage,
+      relatedShot,
       query
     }
   },
-  dispatch => bindActionCreators({loadGithubList}, dispatch)
+  dispatch => bindActionCreators({getShots}, dispatch)
 )
 export default class HomeShots extends Component {
   constructor() {
@@ -37,18 +41,17 @@ export default class HomeShots extends Component {
   }
 
   componentDidMount() {
-    const {loadGithubList,query} = this.props
-    loadGithubList(query)
+    const {getShots,query} = this.props
+    getShots(query)
   }
 
   render() {
-    const {relatedImage, activeTheme} = this.props
-
+    const {relatedShot, activeTheme} = this.props
     const Loading = ({text}) => <Text>{text}</Text>
 
     return (
       <ScrollView>
-        <List data={relatedImage}>
+        <List data={relatedShot}>
           <Card activeTheme={activeTheme}/>
         </List>
       </ScrollView>

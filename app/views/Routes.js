@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {handleActionChange} from '../actions'
 import {
   View,
   Text,
@@ -9,22 +8,26 @@ import {
   UIManager,
   BackAndroid,
   ToastAndroid,
+  AsyncStorage,
   DrawerLayoutAndroid
 } from 'react-native';
 
 // views
-import {Home, Login, User, ShotDetail, Message, Found} from '../views'
+import {Home, Signin, User, ShotDetail, Message, Found} from '../views'
 import {SliderScreen, StatusBar} from '../components'
+import {handleActionChange} from '../actions'
 
 @connect(
   state => {
     const {
+      auth:{ user },
       comment:{isComment},
       shot: {isShot}
     } = state
     return {
       isComment,
-      isShot
+      isShot,
+      user
     }
   },
   dispatch => bindActionCreators({handleActionChange},dispatch)
@@ -32,9 +35,18 @@ import {SliderScreen, StatusBar} from '../components'
 export default class Routes extends Component {
 
   componentWillMount() {
+    this.initAuthUser()
 		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
 		BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid)
 	}
+
+  initAuthUser = async() => {
+    const {handleActionChange} = this.props
+    const user = await AsyncStorage.getItem('user')
+    if(user) {
+      handleActionChange('auth',{user: JSON.parse(user)})
+    }
+  }
 
   onBackAndroid = () => {
     const {isComment, isShot, handleActionChange} = this.props
@@ -71,9 +83,9 @@ export default class Routes extends Component {
     if (route.name) {
       switch (route.name) {
         case 'home' :
-          return <Home {...route.params} />;
+          return <Home {...route.params} />
         case 'login':
-          return <Login {...route.params}/>
+          return <Signin {...route.params}/>
         case 'user':
           return <User {...route.params}/>
         case 'shot':
@@ -91,9 +103,15 @@ export default class Routes extends Component {
 
 
   checkAuth = () => {
-    this.navigator.push({
-      name: 'login'
-    })
+    const {user} = this.props
+    if(!Object.keys(user).length > 0) {
+      this.drawer.closeDrawer()
+      this.navigator.push({
+        name: 'login'
+      })
+      return
+    }
+    return true
   }
 
 
@@ -105,7 +123,7 @@ export default class Routes extends Component {
           ref={drawer=> {this.drawer = drawer}}
           drawerWidth={260}
           drawerPosition={DrawerLayoutAndroid.positions.left}
-          renderNavigationView={() => <SliderScreen navigator={this.navigator}/>}>
+          renderNavigationView={() => <SliderScreen/>}>
           <Navigator
             ref={navigator => {this.navigator = navigator}} // eslint-disable-line
             renderScene={this.renderScene}
