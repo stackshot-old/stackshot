@@ -6,11 +6,12 @@ export const API_ROOT = `http://192.168.5.10:7999`
 
 
 // Extracts the next page URL from Github API response.
-function getNextPageUrl(response) {
-  let link      = response.headers.get('link')
-  let nextLink  = link ? link.split(',').find(s => s.indexOf('rel="next"') > -1) : null
-
-  return nextLink && nextLink.trim().split(';')[0].slice(1,-1)
+function getBeforeTime(response, json) {
+  console.log(response)
+  const {createdAt} = json.slice(-1)[0]
+  if(!!createdAt){
+    return createdAt
+  }
 }
 
 
@@ -28,11 +29,11 @@ function callApi(endpoint, schema, request) {
       }
 
       const camelizedJson = camelizeKeys(json)
-      const nextPageUrl = getNextPageUrl(response)
+      const before = getBeforeTime(response, json)
 
       return Object.assign({},
         normalize(camelizedJson, schema),
-        { nextPageUrl }
+        { before}
       )
     })
 }

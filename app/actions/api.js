@@ -1,35 +1,6 @@
 import { CALL_API, Schemas } from '../middleware/api'
 import { getHeader } from '../actions'
 
-export const GET_SHOTS_REQUEST = 'GET_SHOTS_REQUEST'
-export const GET_SHOTS_SUCCESS = 'GET_SHOTS_SUCCESS'
-export const GET_SHOTS_FAILURE = 'GET_SHOTS_FAILURE'
-
-export const getShots = (query) => (dispatch, getState) => {
-
-  const {
-    pageCount = 0
-  } = getState().pagination.allshots[query] || {}
-
-  if (pageCount > 0) {
-    return null
-  }
-
-  return dispatch({
-    query,
-    [CALL_API]: {
-      types: [ GET_SHOTS_REQUEST, GET_SHOTS_SUCCESS, GET_SHOTS_FAILURE ],
-      endpoint: '/shots',
-      schema: Schemas.SHOT_ARRAY,
-      request: {
-        method: 'GET',
-        headers: getHeader()
-      }
-    }
-  })
-}
-
-
 const loadImageList = (apiRoot, action) => {
   return (query) => {
     return (dispatch, getState) => {
