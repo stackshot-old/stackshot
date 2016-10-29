@@ -2,12 +2,11 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-export const API_ROOT = `http://192.168.10.124:7999`
+export const API_ROOT = `http://192.168.5.10:7999`
 
 
 // Extracts the next page URL from Github API response.
 function getNextPageUrl(response) {
-  console.log(response)
   let link      = response.headers.get('link')
   let nextLink  = link ? link.split(',').find(s => s.indexOf('rel="next"') > -1) : null
 
@@ -50,10 +49,6 @@ const userSchema = new Schema('users', {
   idAttribute: 'id'
 })
 
-const imageSchema = new Schema('images', {
-  idAttribute: 'image'
-})
-
 const uploadSchema = new Schema('upload', {
   idAttribute: 'hash'
 })
@@ -63,7 +58,6 @@ const shotSchema = new Schema('shots', {
 })
 
 shotSchema.define({
-  images: arrayOf(imageSchema),
   user: userSchema
 })
 
@@ -71,8 +65,6 @@ shotSchema.define({
 export const Schemas = {
   USER: userSchema,
   USER_ARRAY: arrayOf(userSchema),
-  POST: imageSchema,
-  POST_ARRAY: arrayOf(imageSchema),
   UPLOAD: uploadSchema,
   SHOT: shotSchema,
   SHOT_ARRAY: arrayOf(shotSchema)
@@ -127,7 +119,6 @@ export default store => next => action => {
       response
     })),
     error => {
-      console.log(error)
       let message = ''
       if(error.code !== 0 && error.code !== undefined){
         message = error.message
@@ -135,6 +126,7 @@ export default store => next => action => {
       return next(actionWith({
         type: failureType,
         error: message,
+        details: error.details,
         code: error.code
       }))
     }

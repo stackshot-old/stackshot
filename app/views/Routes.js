@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 // views
-import {Home, Signin, User, ShotDetail, Message, Found} from '../views'
+import {Home, Signin, User, ShotDetail, Message, Found, Signup} from '../views'
 import {SliderScreen, StatusBar} from '../components'
 import {handleActionChange} from '../actions'
 
@@ -84,8 +84,10 @@ export default class Routes extends Component {
       switch (route.name) {
         case 'home' :
           return <Home {...route.params} />
-        case 'login':
+        case 'signin':
           return <Signin {...route.params}/>
+        case 'signup':
+          return <Signup {...route.params}/>
         case 'user':
           return <User {...route.params}/>
         case 'shot':
@@ -107,7 +109,7 @@ export default class Routes extends Component {
     if(!Object.keys(user).length > 0) {
       this.drawer.closeDrawer()
       this.navigator.push({
-        name: 'login'
+        name: 'signin'
       })
       return
     }

@@ -23,10 +23,11 @@ import {handleActionChange} from '../actions'
       entities: {users},
       theme: {activeTheme}
     } = state
-    const {item:{user}} = props
+    const {item:{user, images}} = props
     return {
       user: users[user],
-      activeTheme
+      activeTheme,
+      image: images[0]
     }
   },
   dispatch => bindActionCreators({handleActionChange}, dispatch)
@@ -62,9 +63,8 @@ export default class Card extends Component {
   }
 
   render() {
-    const {user, image, activeTheme} = this.props
+    const {user, activeTheme, image} = this.props
     const { username, avatar } = user
-
     let ScreenWidth = Dimensions.get('window').width
     let imgWidth = ScreenWidth - 20
 
@@ -73,8 +73,9 @@ export default class Card extends Component {
         {image &&
           <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
               <Image
-                source={{uri: image}}
-                style={{width: imgWidth, height: ScreenWidth / (width / height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
+                source={{uri: image.url}}
+                style={{width: imgWidth, height: ScreenWidth / (image.width / image.height), borderTopLeftRadius: 4, borderTopRightRadius:4}}
+                resizeMode="cover"
               />
           </TouchableWithoutFeedback>
         }
@@ -106,7 +107,6 @@ export default class Card extends Component {
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     backgroundColor: 'white',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     elevation: 10
   },
   cardMD: {
-    height: 150,
+    flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 10,
     flexDirection: 'row'

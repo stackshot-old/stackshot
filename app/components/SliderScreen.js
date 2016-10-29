@@ -2,8 +2,11 @@ import React, {PropTypes, Component} from 'react'
 import {
   View,
   Text,
+  Alert,
   StyleSheet,
   ScrollView,
+  AsyncStorage,
+  ToastAndroid,
   TouchableOpacity,
   TouchableNativeFeedback
 } from 'react-native'
@@ -11,6 +14,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {Avatar} from '../components'
 import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {logout} from '../actions'
 
 @connect(
   state => {
@@ -22,7 +27,8 @@ import {connect} from 'react-redux'
       activeTheme,
       user
     }
-  }
+  },
+  dispatch => bindActionCreators({logout}, dispatch)
 )
 export default class SliderScreen extends Component {
   static contextTypes = {
@@ -51,6 +57,31 @@ export default class SliderScreen extends Component {
     }
   }
 
+  handleLogOut = () => {
+    const {checkAuth, navigator} = this.context.app
+    if(checkAuth()){
+      Alert.alert(null,'乃确定不是点错了?％＊?@＃¥',[
+        {text: '点错了', onPress: () => {}},
+        {text: '退出', onPress: ()=> this.logOut()}
+      ])
+    } else {
+      Alert.alert(null,'骚年你还没登录呢～～',[
+        {text: 'ok', onPress:() => {}},
+        {text: '注册', onPress: ()=> {navigator.push({name: 'signup'})}},
+      ])
+    }
+  }
+
+  logOut = async () => {
+    const {logout} = this.props
+    const result = await AsyncStorage.removeItem('user')
+    if(result == null){
+      logout()
+      this.context.app.navigator.resetTo({name: 'home'})
+      this.context.app.drawer.closeDrawer()
+    }
+  }
+
   render() {
     const {activeIndex} = this.state
     const {activeTheme, user} = this.props
@@ -72,7 +103,10 @@ export default class SliderScreen extends Component {
           <Item icon='info' text="关于图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={4} activeTheme={activeTheme}/>
         </View>
         <View style={styles.SliderFT}>
-          <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
+          <TouchableOpacity
+            onPress={() => this.handleLogOut()}>
+            <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
+          </TouchableOpacity>
         </View>
       </View>
       </ScrollView>
