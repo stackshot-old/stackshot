@@ -29,7 +29,7 @@ const fetchGithubList = (query, nextPageUrl) => {
     [CALL_API]: {
       types: [ POST_LIST_REQUEST, POST_LIST_SUCCESS, POST_LIST_FAILURE ],
       endpoint: nextPageUrl,
-      schema: Schemas.POST_ARRAY,
+      schema: Schemas.SHOT,
       request: {
         method: 'GET',
         headers: getHeader()

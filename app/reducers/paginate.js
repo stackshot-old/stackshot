@@ -18,7 +18,7 @@ export default function paginate({ types, mapActionToKey }) {
 
   function updatePagination(state = {
     isFetching: false,
-    nextPageUrl: undefined,
+    before: undefined,
     pageCount: 0,
     ids: []
   }, action) {
@@ -31,7 +31,7 @@ export default function paginate({ types, mapActionToKey }) {
         return merge({}, state, {
           isFetching: false,
           ids: union(state.ids, action.response.result),
-          nextPageUrl: action.response.nextPageUrl,
+          before: action.response.before,
           pageCount: state.pageCount + 1
         })
       case failureType:

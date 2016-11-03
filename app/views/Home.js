@@ -26,11 +26,13 @@ const screen = Dimensions.get('window')
     const {
       theme: {activeTheme},
       shot: {isShot},
-      comment: {isComment}
+      comment: {isComment},
+      socket: {newShot}
     } = state
     return {
       activeTheme,
       isComment,
+      newShot,
       isShot
     }
   },
@@ -46,10 +48,12 @@ export default class Home extends Component {
   }
 
   render() {
-    const {activeTheme, isShot, isComment} = this.props
+    const {activeTheme, isShot, isComment, newShot} = this.props
+    const {count} = newShot
     return (
       <View style={{flex: 1}}>
         <ToolBar />
+        {count > 0 && <View><Text>{`有新的帖子(${count})`}</Text></View>}
         <HomeShots />
         <ShotModal />
         <CommentModal />
