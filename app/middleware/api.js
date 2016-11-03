@@ -2,23 +2,24 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-const API_ROOT = process.env.NODE_ENV === 'production' ? '' : ''
+export const API_ROOT = `http://192.168.5.4:7999`
 
 
 // Extracts the next page URL from Github API response.
-function getNextPageUrl(response) {
-  let link      = response.headers.get('link')
-  let nextLink  = link ? link.split(',').find(s => s.indexOf('rel="next"') > -1) : null
-
-  return nextLink && nextLink.trim().split(';')[0].slice(1,-1)
+function getBeforeTime(response, json) {
+  if(Array.isArray(json)){
+    const {createdAt} = json.slice(-1)[0]
+    if(createdAt){
+      return createdAt
+    }
+  }
 }
 
 
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
 function callApi(endpoint, schema, request) {
-  const fullUrl = endpoint.includes(API_ROOT) ? (API_ROOT + endpoint) : endpoint
-
+  const fullUrl = endpoint.includes(API_ROOT) ? endpoint : (API_ROOT + endpoint)
   return fetch(fullUrl, request)
     .then(response =>
       response.json().then(json => ({ json, response }))
@@ -28,11 +29,10 @@ function callApi(endpoint, schema, request) {
       }
 
       const camelizedJson = camelizeKeys(json)
-      const nextPageUrl = getNextPageUrl(response)
-
+      const before = getBeforeTime(response, json)
       return Object.assign({},
         normalize(camelizedJson, schema),
-        { nextPageUrl }
+        { before}
       )
     })
 }
@@ -49,20 +49,32 @@ const userSchema = new Schema('users', {
   idAttribute: 'id'
 })
 
-const imageSchema = new Schema('images', {
-  idAttribute: 'image'
-})
-
 const uploadSchema = new Schema('upload', {
   idAttribute: 'hash'
 })
 
+const shotSchema = new Schema('shots', {
+  idAttribute: 'id'
+})
+
+const commentSchema = new Schema('comments', {
+  idAttribute: 'id'
+})
+
+shotSchema.define({
+  user: userSchema,
+  latestComment: arrayOf(commentSchema)
+})
+
+
 export const Schemas = {
   USER: userSchema,
   USER_ARRAY: arrayOf(userSchema),
-  POST: imageSchema,
-  POST_ARRAY: arrayOf(imageSchema),
-  UPLOAD: uploadSchema
+  UPLOAD: uploadSchema,
+  SHOT: shotSchema,
+  SHOT_ARRAY: arrayOf(shotSchema),
+  COMMENT: commentSchema,
+  COMMENT_ARRAY: arrayOf(commentSchema)
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
@@ -114,14 +126,14 @@ export default store => next => action => {
       response
     })),
     error => {
-      console.log(error)
       let message = ''
       if(error.code !== 0 && error.code !== undefined){
         message = error.message
       }
       return next(actionWith({
         type: failureType,
-        error: message,
+        error: error,
+        details: error.details,
         code: error.code
       }))
     }

@@ -1,6 +1,6 @@
 import pull from 'lodash/pull'
 
-export function obj2query(obj){
+export const obj2query = (obj) => {
   return pull(Object.keys(obj).sort().map(key => obj[key] && key + '=' + obj[key]), undefined).join('&')
 }
 
@@ -16,3 +16,5 @@ export const fromPairs = (pairs)  => {
   }
   return result
 }
+
+export const genRgb = () => [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)].join(',')

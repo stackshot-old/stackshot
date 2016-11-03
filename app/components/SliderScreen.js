@@ -2,27 +2,39 @@ import React, {PropTypes, Component} from 'react'
 import {
   View,
   Text,
+  Alert,
   StyleSheet,
   ScrollView,
+  AsyncStorage,
+  ToastAndroid,
+  TouchableOpacity,
   TouchableNativeFeedback
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {Avatar} from '../components'
 import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {logout} from '../actions'
 
 @connect(
   state => {
-    const {theme: {activeTheme}} = state
+    const {
+      auth: {user},
+      theme: {activeTheme}
+    } = state
     return {
-      activeTheme
+      activeTheme,
+      user
     }
-  }
+  },
+  dispatch => bindActionCreators({logout}, dispatch)
 )
 export default class SliderScreen extends Component {
-  static propTypes = {
-    navigator: PropTypes.object,
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
   }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -31,19 +43,68 @@ export default class SliderScreen extends Component {
   }
 
   handleSelected = (index) => {
-    const {navigator} = this.props
+    const {navigator, drawer} = this.context.app
     this.setState({ activeIndex: index })
+    switch (index) {
+      case 0:
+        navigator.push({name: 'home'})
+        break
+      case 2:
+        navigator.push({name: 'theme'})
+        break
+      default:
+        return
+    }
+    drawer.closeDrawer()
+  }
+
+  handlePressAvatar = () => {
+    const {checkAuth, navigator, drawer} = this.context.app
+    if(checkAuth()){
+      drawer.closeDrawer()
+      navigator.push({
+        name: 'user'
+      })
+    }
+  }
+
+  handleLogOut = () => {
+    const {checkAuth, navigator} = this.context.app
+    if(checkAuth()){
+      Alert.alert(null,'乃确定不是点错了?％＊?@＃¥',[
+        {text: '点错了', onPress: () => {}},
+        {text: '退出', onPress: ()=> this.logOut()}
+      ])
+    } else {
+      Alert.alert(null,'骚年你还没登录呢～～',[
+        {text: 'ok', onPress:() => {}},
+        {text: '注册', onPress: ()=> {navigator.push({name: 'signup'})}},
+      ])
+    }
+  }
+
+  logOut = async () => {
+    const {logout} = this.props
+    const result = await AsyncStorage.removeItem('user')
+    if(result == null){
+      logout()
+      this.context.app.navigator.resetTo({name: 'home'})
+      this.context.app.drawer.closeDrawer()
+    }
   }
 
   render() {
     const {activeIndex} = this.state
-    const {activeTheme} = this.props
+    const {activeTheme, user} = this.props
+    const {username, avatar} = user
     return (
       <ScrollView>
       <View style={styles.Container}>
         <View style={styles.SliderHD}>
-          <Avatar source={{uri: 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
-          <Text>Miku</Text>
+          <TouchableOpacity onPress={() => this.handlePressAvatar()}>
+            <Avatar source={{uri: avatar ? avatar : 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
+          </TouchableOpacity>
+          <Text>{username ? username : 'Miku'}</Text>
         </View>
         <View style={styles.SliderMD}>
           <Item icon='favorite' text="我的图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>
@@ -53,7 +114,10 @@ export default class SliderScreen extends Component {
           <Item icon='info' text="关于图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={4} activeTheme={activeTheme}/>
         </View>
         <View style={styles.SliderFT}>
-          <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
+          <TouchableOpacity
+            onPress={() => this.handleLogOut()}>
+            <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
+          </TouchableOpacity>
         </View>
       </View>
       </ScrollView>

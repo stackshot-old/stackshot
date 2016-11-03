@@ -16,7 +16,11 @@ import {signin} from '../actions'
   state => ({}),
   dispatch => bindActionCreators({signin}, dispatch)
 )
-export default class Login extends React.Component {
+export default class Signin extends React.Component {
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -25,20 +29,22 @@ export default class Login extends React.Component {
     }
   }
 
-
   handleSignIn = async (data) => {
-    const {signin, navigator} = this.props
+    const {navigator} = this.context.app
+    const {signin} = this.props
     const result = await signin(data)
     if(result.type === "SIGNIN_SUCCESS"){
       const {response:{entities:{users}, result:{user, token}}} = result
       const me = users[user]
-      const saved = await AsyncStorage.multiSet([['user', JSON.stringify(me)], ['token', JSON.stringify(token)]])
+      const saved = await AsyncStorage.setItem('user', JSON.stringify({...me, token}))
       if(!saved){
-        navigator.push({
+        navigator.resetTo({
           name: 'home'
         })
         ToastAndroid.show('登录成功',ToastAndroid.SHORT)
       }
+    }else {
+      ToastAndroid.show('登录失败，请稍后再试试～', ToastAndroid.SHORT)
     }
   }
 
@@ -51,6 +57,9 @@ export default class Login extends React.Component {
           <TextInput onChangeText={(text)=> {this.setState({ password: text})}} placeholder={"你的密码"} secureTextEntry={true} />
           <TouchableOpacity onPress={()=> this.handleSignIn({account, password})} disabled={(!account && !password)}>
             <Text>登录</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=> this.context.app.navigator.push({name: 'signup'})} >
+            <Text>注册</Text>
           </TouchableOpacity>
         </View>
       </View>

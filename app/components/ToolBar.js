@@ -16,12 +16,14 @@ import {Avatar} from '../components'
 @connect(
   state => {
     const {
+      auth:{ user},
       theme: {activeTheme},
       common: {toolbar:{ activeIndex }}
     } = state
     return {
       activeIndex,
-      activeTheme
+      activeTheme,
+      user
     }
   },
   dispatch => bindActionCreators({toggleToolbar}, dispatch)
@@ -33,6 +35,11 @@ export default class ToolBar extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  handlePressAvatar = () => {
+    const {drawer} = this.context.app
+    drawer.openDrawer()
   }
 
   handleSelected = (index) => {
@@ -55,10 +62,13 @@ export default class ToolBar extends Component {
   }
 
   render() {
-    const {activeTheme, activeIndex} = this.props
+    const {activeTheme, activeIndex, user} = this.props
+    const { username, avatar } = user
     return (
       <View style={styles.Container}>
-        <Avatar source={{uri: 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={40} style={{marginLeft: 10}}/>
+        <TouchableOpacity onPress={()=> this.handlePressAvatar()}>
+          <Avatar source={{uri: avatar ? avatar : 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={40} style={{marginLeft: 10}}/>
+        </TouchableOpacity>
         <View style={styles.List}>
           <Item icon='home' text="首页" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>
           <Item icon='explore' text="发现" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
