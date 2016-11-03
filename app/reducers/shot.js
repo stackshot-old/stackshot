@@ -1,6 +1,6 @@
 import * as ActionTypes from '../actions'
 
-const init = { isShot: false, images:[]}
+const init = { isShot: false, content: '', images:[]}
 
 export default function shot( state=init , action ) {
   switch (action.type) {
@@ -11,10 +11,7 @@ export default function shot( state=init , action ) {
         return Object.assign({}, state, action.data)
       }
     case ActionTypes.RESET_UPLOAD:
-      return Object.assign({}, state, {
-        images:[]
-      })
-      return
+      return init
     default:
       return state
   }

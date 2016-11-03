@@ -1,4 +1,5 @@
 import * as ActionTypes from '../actions'
+import {AsyncStorage} from 'react-native'
 
 const init = {user: {}}
 export default function auth( state=init, action ) {

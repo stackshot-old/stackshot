@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {handleActionChange} from '../actions'
 import {
   Alert,
   View,
@@ -9,15 +8,16 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  ToastAndroid,
   LayoutAnimation,
   TouchableOpacity
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-
 // Components
 import { FloatButton, Modal} from '../components';
+import {handleActionChange, addComment, resetComment} from '../actions'
 
 const screen = Dimensions.get('window')
 
@@ -25,14 +25,18 @@ const screen = Dimensions.get('window')
   state => {
     const {
       theme: {activeTheme},
-      comment: {isComment}
+      comment: {isComment, content, parent, replyTo, placeholder}
     } = state
     return {
       activeTheme,
-      isComment
+      placeholder,
+      isComment,
+      content,
+      replyTo,
+      parent
     }
   },
-  dispatch => bindActionCreators({handleActionChange},dispatch)
+  dispatch => bindActionCreators({handleActionChange, addComment, resetComment},dispatch)
 )
 export default class CommentModal extends Component {
 
@@ -42,16 +46,19 @@ export default class CommentModal extends Component {
     handleActionChange('comment', {isComment: !isComment})
   }
 
-  handleSend(){
-    alert('sending.....')
+  handleSend = async() => {
+    const {handleActionChange, resetComment} = this.props
+    const result = await this.props.addComment()
+    if(result.type="COMMENT_SUCCESS"){
+      ToastAndroid.show('评论成功',ToastAndroid.SHORT)
+      handleActionChange('comment', {isComment: false})
+      resetComment()
+    }
   }
 
-  handleUpLoad(){
-    alert('uploading....')
-  }
 
   render() {
-    const {activeTheme, isComment} = this.props
+    const {activeTheme, isComment, handleActionChange, placeholder} = this.props
     return (
       <Modal isopen={isComment}>
         <View style={{marginTop: 60, marginHorizontal: 10}}>
@@ -60,13 +67,13 @@ export default class CommentModal extends Component {
               <TouchableOpacity onPress={::this.handleToggle}>
                 <Icon name="close" color={`rgb(${activeTheme})`} size={30}/>
               </TouchableOpacity>
-              <TouchableOpacity onPress={::this.handleSend}>
+              <TouchableOpacity onPress={() => this.handleSend()}>
                 <Icon name="send" color={`rgb(${activeTheme})`} size={30} style={{transform:[{rotate:"-35deg"}]}}/>
               </TouchableOpacity>
             </View>
           </View>
           <View style={{backgroundColor: `white`, minHeight: 200, borderBottomLeftRadius: 4, borderBottomRightRadius:4, paddingVertical: 5, paddingHorizontal: 10,}}>
-            <TextInput placeholder={"评论来一发～"} multiline={true} autoFocus={true} style={{lineHeight: 20}} textAlignVertical={'top'} numberOfLines={3} underlineColorAndroid={'transparent'}/>
+            <TextInput onChangeText={(text) => handleActionChange('comment',{content: text})} placeholder={placeholder} multiline={true} autoFocus={true} style={{lineHeight: 20}} textAlignVertical={'top'} numberOfLines={3} underlineColorAndroid={'transparent'}/>
           </View>
         </View>
       </Modal>

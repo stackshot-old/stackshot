@@ -5,6 +5,7 @@ import paginate from './paginate'
 import entities from './entities'
 import comment from './comment'
 import common from './common'
+import socket from './socket'
 import theme from './theme'
 import shot from './shot'
 import auth from './auth'
@@ -33,6 +34,7 @@ export default combineReducers({
   entities,
   comment,
   common,
+  socket,
   theme,
   shot,
   auth

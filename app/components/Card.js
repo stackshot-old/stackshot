@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  ToastAndroid,
   LayoutAnimation,
   TouchableOpacity,
   TouchableWithoutFeedback
@@ -14,23 +15,25 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import {Button, Avatar} from '../components'
-import {handleActionChange} from '../actions'
+import {Button, Avatar, List} from '../components'
+import {handleActionChange, like} from '../actions'
 
 @connect(
   (state, props) => {
     const {
-      entities: {users},
+      entities: {users, comments},
       theme: {activeTheme}
     } = state
-    const {item:{user, images}} = props
+    const {item, item:{user, images}} = props
     return {
       user: users[user],
       activeTheme,
-      image: images[0]
+      image: images[0],
+      comments,
+      item
     }
   },
-  dispatch => bindActionCreators({handleActionChange}, dispatch)
+  dispatch => bindActionCreators({handleActionChange, like}, dispatch)
 )
 export default class Card extends Component {
 
@@ -42,20 +45,31 @@ export default class Card extends Component {
     app: PropTypes.object.isRequired,
   }
 
-  handleComment(){
-    const {handleActionChange} = this.props
+  CommentOnShot = () => {
+    const {handleActionChange, item:{id}} = this.props
     LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
-    handleActionChange('comment',{ isComment: true})
+    handleActionChange('comment',{ isComment: true, parent: id})
   }
 
-  handlePressAvatar(){
+  CommentOnUser = (user) => {
+    const {handleActionChange, item:{id}} = this.props
+    LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
+    handleActionChange('comment',{ isComment: true, parent: id, replyTo: user.id, placeholder: `@${user.username}`})
+  }
+
+  handleLike = async() => {
+    const {item:{liked, id}, like} = this.props
+    const result = await like({id, liked})
+  }
+
+  handlePressAvatar = () => {
     const {navigator} = this.context.app
     navigator.push({
       name: 'user'
     })
   }
 
-  handlePressShot(){
+  handlePressShot = () => {
     const {navigator} = this.context.app
     navigator.push({
       name: 'shot'
@@ -63,7 +77,11 @@ export default class Card extends Component {
   }
 
   render() {
-    const {user, activeTheme, image} = this.props
+    const {user, activeTheme, image, item, comments} = this.props
+    const {content, latestComment, likesCount, liked} = item
+
+    const latestCommentData = latestComment.map(id => comments[id])
+
     const { username, avatar } = user
     let ScreenWidth = Dimensions.get('window').width
     let imgWidth = ScreenWidth - 20
@@ -89,20 +107,44 @@ export default class Card extends Component {
             <Text style={[{fontSize: 12, color: 'rgb(153, 157, 175)'}]}>刚刚</Text>
             </View>
           <View style={styles.cardRGMD}>
-            <Text numberOfLines={4}> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Text>
+            <Text numberOfLines={4}>{content}</Text>
           </View>
           <View style={styles.cardRGFT}>
-            <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>0人点赞</Text>
+            <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>{likesCount}人点赞</Text>
             <View style={styles.cardRGFTRG}>
-              <Button icon={<Icon name="favorite"/>} label="点赞" onPress={() => {Alert.alert('点赞')}}/>
-              <Button active={true} icon={<Icon name="mode-comment"/>} label="评论" onPress={::this.handleComment}/>
+              <Button active={liked} icon={<Icon name="favorite"/>} label="点赞" onPress={() => this.handleLike()}/>
+              <Button active={latestComment.length > 0} icon={<Icon name="mode-comment"/>} label="评论" onPress={() => this.CommentOnShot()}/>
             </View>
           </View>
         </View>
         </View>
+        <View stlye={styles.cardFT}>
+          <List data={latestCommentData}>
+            <CommentItem CommentOnUser={(user) => this.CommentOnUser(user)}/>
+          </List>
+        </View>
       </View>
     )
   }
+}
+
+const CommentItem = (props) => {
+  const {CommentOnUser} = props
+  const {content, user, replyTo} = props.item || {}
+  const {username, avatar, id} = user || {}
+  return (
+    <View style={{flexDirection: 'row', flex: 1}}>
+      <View>
+        <Avatar source={{uri: avatar}} style={styles.avatar}/>
+        <Text>{username}</Text>
+      </View>
+      <TouchableOpacity style={{flexDirection: 'row', flex: 1}} onPress={() => CommentOnUser(user)}>
+        <View>
+          <Text>{replyTo && `@${replyTo.username}`}{content}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -128,25 +170,29 @@ const styles = StyleSheet.create({
   },
   cardRG: {
     flex: 1,
+    minHeight: 100,
     marginLeft: 10,
     flexDirection: 'column',
     justifyContent: 'space-between'
   },
   cardRGHD: {
     flexDirection: 'row',
-    flex: 2,
+    flex: 1,
     justifyContent: 'space-between'
   },
   cardRGMD: {
-    flex: 9
+    flex: 1
   },
   cardRGFT: {
-    flex: 3,
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
   cardRGFTRG: {
     flexDirection: 'row'
+  },
+  cardFT: {
+
   }
 })

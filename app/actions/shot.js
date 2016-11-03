@@ -53,6 +53,7 @@ export const addShot = (data) => (dispatch, getState) => {
   })
 }
 
+
 export const ADD_IMAGE = 'ADD_IMAGE'
 export const addImage = (data) => {
   return {
@@ -66,4 +67,26 @@ export const resetUpload = () => {
   return {
     type: RESET_UPLOAD
   }
+}
+
+export const LIKE_REQUEST = 'LIKE_REQUEST'
+export const LIKE_SUCCESS = 'LIKE_SUCCESS'
+export const LIKE_FAILURE = 'LIKE_FAILURE'
+
+export const like = ({id, liked}) => (dispatch, getState) => {
+  const {token} = getState().auth.user
+  return dispatch({
+    [CALL_API]: {
+      types: [ LIKE_REQUEST, LIKE_SUCCESS, LIKE_FAILURE ],
+      endpoint: `/shot/${id}/like`,
+      schema: {shot: Schemas.SHOT},
+      request: {
+        method: 'PUT',
+        headers: {...getHeader(), ...{Authorization: `Bearer ${token}`}},
+        body: JSON.stringify({
+          liked: !liked
+        })
+      }
+    }
+  })
 }

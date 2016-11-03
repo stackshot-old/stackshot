@@ -15,7 +15,8 @@ import {
 // views
 import {Home, Signin, User, ShotDetail, Message, Found, Signup} from '../views'
 import {SliderScreen, StatusBar} from '../components'
-import {handleActionChange} from '../actions'
+import {handleActionChange, connectWebScoket} from '../actions'
+import {API_ROOT} from '../middleware/api'
 
 @connect(
   state => {
@@ -30,12 +31,13 @@ import {handleActionChange} from '../actions'
       user
     }
   },
-  dispatch => bindActionCreators({handleActionChange},dispatch)
+  dispatch => bindActionCreators({handleActionChange, connectWebScoket},dispatch)
 )
 export default class Routes extends Component {
 
   componentWillMount() {
     this.initAuthUser()
+    this.props.connectWebScoket()
 		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
 		BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid)
 	}

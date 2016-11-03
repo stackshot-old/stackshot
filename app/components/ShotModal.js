@@ -29,12 +29,13 @@ const screen = Dimensions.get('window')
     const {
       auth:{user},
       theme: {activeTheme},
-      shot: {isShot, images}
+      shot: {isShot, images, content}
     } = state
     return {
       activeTheme,
       isShot,
       images,
+      content,
       user,
     }
   },
@@ -49,12 +50,17 @@ export default class ShotModal extends Component {
   }
 
   handleSend = async() =>{
-    const {addShot, images, resetUpload} = this.props
-    const result = await addShot({images})
-    if(result.type === 'ADD_SHOT_SUCCESS'){
-      ToastAndroid.show('发送成功～～～～', ToastAndroid.SHORT)
-      this.handleToggle()
-      resetUpload()
+    const {addShot, images, resetUpload, content} = this.props
+    if(content){
+      const result = await addShot({images, content, type:'image'})
+      if(result.type === 'ADD_SHOT_SUCCESS'){
+        ToastAndroid.show('发送成功～～～～', ToastAndroid.SHORT)
+        this.handleToggle()
+        resetUpload()
+      }
+    }
+    if(!content){
+      ToastAndroid.show('请输入内容哟～ԅ(¯﹃¯ԅ)  ',ToastAndroid.SHORT)
     }
   }
 
@@ -83,13 +89,13 @@ export default class ShotModal extends Component {
   }
 
   render() {
-    const {activeTheme, isShot, images} = this.props
+    const {activeTheme, isShot, images, handleActionChange} = this.props
     return (
       <Modal isopen={isShot} onBackPress={() => this.handleBackPress()}>
         <View style={{marginTop: 60, marginHorizontal: 10}}>
           <Uploader images={images} activeTheme={activeTheme} handleToggle={() => this.handleToggle()} handleUpLoad={() => this.handleUpLoad()} handleSend={() => this.handleSend()}/>
           <View style={{backgroundColor: `white`, borderBottomLeftRadius: 4, borderBottomRightRadius:4, paddingVertical: 5, paddingHorizontal: 10,}}>
-            <TextInput placeholder={"图槽来一发～"} multiline={true} autoFocus={true} style={{lineHeight: 20}} textAlignVertical={'top'} numberOfLines={3} underlineColorAndroid={'transparent'}/>
+            <TextInput onChangeText={(text) => handleActionChange('shot',{content: text})} placeholder={"图槽来一发～"} multiline={true} autoFocus={true} style={{lineHeight: 20}} textAlignVertical={'top'} numberOfLines={3} underlineColorAndroid={'transparent'}/>
           </View>
         </View>
       </Modal>
