@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 // views
-import {Home, Signin, User, ShotDetail, Message, Found, Signup} from '../views'
+import {Home, Signin, User, ShotDetail, Message, Found, Signup, Theme} from '../views'
 import {SliderScreen, StatusBar} from '../components'
 import {handleActionChange, connectWebScoket} from '../actions'
 import {API_ROOT} from '../middleware/api'
@@ -37,6 +37,7 @@ export default class Routes extends Component {
 
   componentWillMount() {
     this.initAuthUser()
+    this.initTheme()
     this.props.connectWebScoket()
 		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
 		BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid)
@@ -47,6 +48,15 @@ export default class Routes extends Component {
     const user = await AsyncStorage.getItem('user')
     if(user) {
       handleActionChange('auth',{user: JSON.parse(user)})
+    }
+  }
+
+  initTheme = async () => {
+    const {handleActionChange} = this.props
+    const theme = await AsyncStorage.getItem('storeTheme')
+    console.log(theme)
+    if(theme) {
+      handleActionChange('theme',{activeTheme: theme, storeTheme: theme})
     }
   }
 
@@ -97,7 +107,9 @@ export default class Routes extends Component {
         case 'message':
           return <Message {...route.params}/>
         case 'found':
-         return <Found {...route.params}/>
+          return <Found {...route.params}/>
+        case 'theme':
+          return <Theme {...route.params}/>
         default:
           return <View />;
       }

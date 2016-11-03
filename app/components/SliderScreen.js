@@ -43,8 +43,19 @@ export default class SliderScreen extends Component {
   }
 
   handleSelected = (index) => {
-    const {navigator} = this.props
+    const {navigator, drawer} = this.context.app
     this.setState({ activeIndex: index })
+    switch (index) {
+      case 0:
+        navigator.push({name: 'home'})
+        break
+      case 2:
+        navigator.push({name: 'theme'})
+        break
+      default:
+        return
+    }
+    drawer.closeDrawer()
   }
 
   handlePressAvatar = () => {

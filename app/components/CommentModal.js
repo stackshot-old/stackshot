@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // Components
 import { FloatButton, Modal} from '../components';
-import {handleActionChange, addComment, resetComment} from '../actions'
+import {handleActionChange, addComment, resetComment, toggleComment} from '../actions'
 
 const screen = Dimensions.get('window')
 
@@ -36,14 +36,14 @@ const screen = Dimensions.get('window')
       parent
     }
   },
-  dispatch => bindActionCreators({handleActionChange, addComment, resetComment},dispatch)
+  dispatch => bindActionCreators({handleActionChange, addComment, resetComment, toggleComment},dispatch)
 )
 export default class CommentModal extends Component {
 
   handleToggle(){
-    const {handleActionChange, isComment} = this.props
+    const {handleActionChange, isComment, toggleComment} = this.props
     LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
-    handleActionChange('comment', {isComment: !isComment})
+    toggleComment()
   }
 
   handleSend = async() => {
@@ -51,11 +51,9 @@ export default class CommentModal extends Component {
     const result = await this.props.addComment()
     if(result.type="COMMENT_SUCCESS"){
       ToastAndroid.show('评论成功',ToastAndroid.SHORT)
-      handleActionChange('comment', {isComment: false})
       resetComment()
     }
   }
-
 
   render() {
     const {activeTheme, isComment, handleActionChange, placeholder} = this.props

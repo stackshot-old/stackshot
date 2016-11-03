@@ -16,3 +16,5 @@ export const fromPairs = (pairs)  => {
   }
   return result
 }
+
+export const genRgb = () => [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)].join(',')

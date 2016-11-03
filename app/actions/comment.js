@@ -37,3 +37,11 @@ export const resetComment = () => {
     type: RESET_COMMENT
   }
 }
+
+export const TOGGLE_COMMENT = 'TOGGLE_COMMENT'
+
+export const toggleComment = () => {
+  return {
+    type: TOGGLE_COMMENT
+  }
+}
