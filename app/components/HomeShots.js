@@ -67,6 +67,7 @@ export default class HomeShots extends Component {
           dataSource={dataSource}
           enableEmptySections={true}
           onEndReachedThreshold={30}
+          contentContainerStyle={{paddingHorizontal: 10, paddingTop: 10}}
           onEndReached={()=> this.onEndReached()}
           renderRow={item => <Card item={item} activeTheme={activeTheme}/>}
           />

@@ -15,7 +15,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import {Button, Avatar, List} from '../components'
+import {Button, Avatar, List, LazyList} from '../components'
 import {handleActionChange, like} from '../actions'
 
 @connect(
@@ -119,9 +119,12 @@ export default class Card extends Component {
         </View>
         </View>
         <View stlye={styles.cardFT}>
-          <List data={latestCommentData}>
-            <CommentItem CommentOnUser={(user) => this.CommentOnUser(user)}/>
-          </List>
+          <LazyList
+            datas={latestCommentData}
+            limit={3}
+            style={{backgroundColor:'rgb(242,244,252)', paddingHorizontal: 10}}>
+            <CommentItem CommentOnUser={(user) => this.CommentOnUser(user)} activeTheme={activeTheme}/>
+          </LazyList>
         </View>
       </View>
     )
@@ -129,18 +132,18 @@ export default class Card extends Component {
 }
 
 const CommentItem = (props) => {
-  const {CommentOnUser} = props
+  const {CommentOnUser, activeTheme} = props
   const {content, user, replyTo} = props.item || {}
   const {username, avatar, id} = user || {}
   return (
-    <View style={{flexDirection: 'row', flex: 1}}>
-      <View>
+    <View style={{flexDirection: 'row', flex: 1, paddingVertical: 10, alignItems: 'center', height: 50}}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Avatar source={{uri: avatar}} style={styles.avatar}/>
-        <Text>{username}</Text>
+        <Text style={{color: `rgb(${activeTheme})`, fontSize: 14}}>{username}</Text>
       </View>
-      <TouchableOpacity style={{flexDirection: 'row', flex: 1}} onPress={() => CommentOnUser(user)}>
+      <TouchableOpacity style={{flexDirection: 'row', flex: 1, marginLeft: 5}} onPress={() => CommentOnUser(user)}>
         <View>
-          <Text>{replyTo && `@${replyTo.username}`}{content}</Text>
+          <Text style={{fontSize: 14}}>{replyTo && `@${replyTo.username}`}:{content}</Text>
         </View>
       </TouchableOpacity>
     </View>
