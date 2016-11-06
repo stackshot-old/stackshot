@@ -1,6 +1,6 @@
 import * as ActionTypes from '../actions'
 
-const init = { isComment: false,  content: '', parent: '', replyTo: '', placeholder: '评论来一发~(*･∀･)／＼(･∀･*)'  }
+const init = { isComment: false,  content: '', shot: '', replyTo: '', placeholder: '评论来一发~(*･∀･)／＼(･∀･*)'  }
 export default function shot( state=init, action ) {
   switch (action.type) {
     case ActionTypes.RESET_COMMENT:
@@ -9,7 +9,7 @@ export default function shot( state=init, action ) {
       return {...state, ...{
         isComment: !state.isComment,
         content: '',
-        parent: '',
+        shot: '',
         replyTo: '',
         placeholder: init.placeholder,
       }}

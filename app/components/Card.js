@@ -48,13 +48,13 @@ export default class Card extends Component {
   CommentOnShot = () => {
     const {handleActionChange, item:{id}} = this.props
     LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
-    handleActionChange('comment',{ isComment: true, parent: id})
+    handleActionChange('comment',{ isComment: true, shot: id})
   }
 
   CommentOnUser = (user) => {
     const {handleActionChange, item:{id}} = this.props
     LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
-    handleActionChange('comment',{ isComment: true, parent: id, replyTo: user.id, placeholder: `@${user.username}`})
+    handleActionChange('comment',{ isComment: true, shot: id, replyTo: user.id, placeholder: `@${user.username}`})
   }
 
   handleLike = async() => {

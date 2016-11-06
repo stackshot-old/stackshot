@@ -13,8 +13,8 @@ export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
 
 export const addComment = () => (dispatch, getState) => {
   const {token} = getState().auth.user
-  const {content, parent, replyTo} = getState().comment
-  const filter = checkDefine({content, parent, replyTo})
+  const {content, shot, replyTo} = getState().comment
+  const filter = checkDefine({content, shot, replyTo})
 
   return dispatch({
     [CALL_API]: {
