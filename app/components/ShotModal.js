@@ -91,7 +91,7 @@ export default class ShotModal extends Component {
   render() {
     const {activeTheme, isShot, images, handleActionChange} = this.props
     return (
-      <Modal isopen={isShot} onBackPress={() => this.handleBackPress()}>
+      <Modal isopen={isShot}>
         <View style={{marginTop: 60, marginHorizontal: 10}}>
           <Uploader images={images} activeTheme={activeTheme} handleToggle={() => this.handleToggle()} handleUpLoad={() => this.handleUpLoad()} handleSend={() => this.handleSend()}/>
           <View style={{backgroundColor: `white`, borderBottomLeftRadius: 4, borderBottomRightRadius:4, paddingVertical: 5, paddingHorizontal: 10,}}>

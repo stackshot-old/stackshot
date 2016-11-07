@@ -16,6 +16,7 @@ export default class LazyList extends React.Component {
   static defaultProps = {
     datas: [],
     limit: 3,
+    showEmpty: false,
     loadmoreLabel: '更多评论'
   }
 
@@ -46,10 +47,22 @@ export default class LazyList extends React.Component {
 
   render() {
     const {page} = this.state
-    const {datas, limit, loadMore, loadmoreLabel} = this.props
+    const {datas, limit, loadMore, loadmoreLabel, showEmpty} = this.props
     const overCount = datas.length - limit * page
+    const isEmpty = datas.length === 0
+
+
+    if(showEmpty && isEmpty){
+      if(this.props.onEmpty){return onEmpty}
+      return (
+        <View style={{flexDirection:'row', flex: 1, justifyContent: 'center'}}>
+          <Text style={{color:"rgb(153, 157, 175)"}}>啊嘞，好像没有数据..</Text>
+        </View>
+      )
+    }
+
     return (
-      <View style={[styles.container,{...this.props.style}]}>
+      <View style={{...styles.container, ...this.props.style}}>
         {this.renderItem()}
         {overCount > 0 && ( loadMore ? loadMore({overCount, next: this.nextPage}) :
           <View stlye={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: this.props.style.backgroundColor}}>

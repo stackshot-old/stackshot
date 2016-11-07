@@ -6,25 +6,26 @@ import entities from './entities'
 import comment from './comment'
 import common from './common'
 import socket from './socket'
+import search from './search'
 import theme from './theme'
 import shot from './shot'
 import auth from './auth'
 
 const pagination = combineReducers({
-  allimages: paginate({
-    mapActionToKey: action => action.query,
-    types: [
-      ActionTypes.POST_LIST_REQUEST,
-      ActionTypes.POST_LIST_SUCCESS,
-      ActionTypes.POST_LIST_FAILURE,
-    ]
-  }),
   allshots: paginate({
     mapActionToKey: action => action.query,
     types: [
       ActionTypes.GET_SHOTS_REQUEST,
       ActionTypes.GET_SHOTS_SUCCESS,
       ActionTypes.GET_SHOTS_FAILURE,
+    ]
+  }),
+  allsearchs: paginate({
+    mapActionToKey: action => action.query,
+    types: [
+      ActionTypes.GET_SEARCHS_REQUEST,
+      ActionTypes.GET_SEARCHS_SUCCESS,
+      ActionTypes.GET_SEARCHS_FAILURE,
     ]
   })
 })
@@ -34,6 +35,7 @@ export default combineReducers({
   entities,
   comment,
   common,
+  search,
   socket,
   theme,
   shot,

@@ -3,12 +3,13 @@ import {
   Text,
   View,
   StyleSheet,
+  LayoutAnimation,
   TouchableOpacity
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {toggleToolbar} from '../actions'
+import {toggleToolbar, toggleSearch} from '../actions'
 
 import {Avatar} from '../components'
 
@@ -26,7 +27,7 @@ import {Avatar} from '../components'
       user
     }
   },
-  dispatch => bindActionCreators({toggleToolbar}, dispatch)
+  dispatch => bindActionCreators({toggleToolbar, toggleSearch}, dispatch)
 )
 export default class ToolBar extends Component {
   static contextTypes = {
@@ -61,6 +62,12 @@ export default class ToolBar extends Component {
     }
   }
 
+  handleSearch = () => {
+    const {toggleSearch} = this.props
+    LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
+    toggleSearch()
+  }
+
   render() {
     const {activeTheme, activeIndex, user} = this.props
     const { username, avatar } = user
@@ -74,7 +81,7 @@ export default class ToolBar extends Component {
           <Item icon='explore' text="发现" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
           <Item icon='textsms' text="消息" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} activeTheme={activeTheme}/>
         </View>
-        <Icon name="search" color="rgb(151,176,200)" size={25} style={styles.Search}/>
+        <Icon name="search" color="rgb(151,176,200)" size={25} style={styles.Search} onPress={() => this.handleSearch()}/>
       </View>
     )
   }

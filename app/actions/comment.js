@@ -1,11 +1,7 @@
 import { CALL_API, Schemas } from '../middleware/api'
 import { getHeader } from '../actions'
+import {checkDefine} from '../utils'
 
-const checkDefine = (data) => {
-  let obj = {}
-  Object.keys(data).filter(key => data[key] !== undefined && data[key] !== '').map(key => { obj[key] = data[key]})
-  return obj
-}
 
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'

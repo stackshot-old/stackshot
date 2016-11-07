@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 
 // views
-import {Home, Signin, User, ShotDetail, Message, Found, Signup, Theme} from '../views'
-import {SliderScreen, StatusBar} from '../components'
+import {Home, Signin, User, ShotDetail, Message, Found, Signup, Theme, Search} from '../views'
+import {SliderScreen, StatusBar, SearchModal} from '../components'
 import {handleActionChange, connectWebScoket} from '../actions'
 import {API_ROOT} from '../middleware/api'
 
@@ -23,10 +23,12 @@ import {API_ROOT} from '../middleware/api'
     const {
       auth:{ user },
       comment:{isComment},
-      shot: {isShot}
+      shot: {isShot},
+      search: {isSearch}
     } = state
     return {
       isComment,
+      isSearch,
       isShot,
       user
     }
@@ -54,20 +56,23 @@ export default class Routes extends Component {
   initTheme = async () => {
     const {handleActionChange} = this.props
     const theme = await AsyncStorage.getItem('storeTheme')
-    console.log(theme)
     if(theme) {
       handleActionChange('theme',{activeTheme: theme, storeTheme: theme})
     }
   }
 
   onBackAndroid = () => {
-    const {isComment, isShot, handleActionChange} = this.props
+    const {isComment, isShot, isSearch, handleActionChange} = this.props
     if(isComment){
       handleActionChange('comment', {isComment: false})
       return true
     }
     if(isShot) {
       handleActionChange('shot', {isShot: false})
+      return true
+    }
+    if(isSearch) {
+      handleActionChange('search', {isSearch: false})
       return true
     }
 
@@ -110,6 +115,8 @@ export default class Routes extends Component {
           return <Found {...route.params}/>
         case 'theme':
           return <Theme {...route.params}/>
+        case 'search':
+          return <Search {...route.params}/>
         default:
           return <View />;
       }
@@ -148,6 +155,7 @@ export default class Routes extends Component {
               name: 'home'
             }} />
         </DrawerLayoutAndroid>
+        <SearchModal/>
       </Provider>
     );
   }
