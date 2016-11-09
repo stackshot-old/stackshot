@@ -5,6 +5,7 @@ import {
   Alert,
   View,
   Text,
+  Image,
   StyleSheet,
   Dimensions,
   TextInput,
@@ -24,14 +25,18 @@ const screen = Dimensions.get('window')
 @connect(
   state => {
     const {
+      entities:{shots},
+      pagination: { allsearchs },
       theme: {activeTheme},
       search: {isSearch, content}
     } = state
     const query = obj2query({
-      content
+      content: content
     })
-
+    const searchPagination = allsearchs[query] || { ids: [] }
+    const relatedShot  = searchPagination.ids.map(id => shots[id]);
     return {
+      relatedShot,
       activeTheme,
       isSearch,
       content,
@@ -54,8 +59,8 @@ export default class CommentModal extends Component {
 
 
   handleSearch = async () => {
-    const {getSearchs} = this.props
-    const result = await getSearchs()
+    const {getSearchs, query} = this.props
+    const result = await getSearchs({query})
     if(result.type === 'SEARCH_SUCCESS'){
         ToastAndroid.show('发送成功～～～～', ToastAndroid.SHORT)
         this.handleToggle()
@@ -76,20 +81,20 @@ export default class CommentModal extends Component {
   }
 
   render() {
-    const {activeTheme, content, isSearch, handleActionChange} = this.props
+    const {activeTheme, content, isSearch, handleActionChange, relatedShot} = this.props
     return (
       <Modal isopen={isSearch}>
         <View style={styles.container}>
           <View style={{marginTop: 20, paddingHorizontal: 10, marginHorizontal: 10,height: 50, borderRadius: 5, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <TextInput onChangeText={(text) => handleActionChange('search',{content: text})} style={{flex: 1, color: 'rgb(114,122,126)'}} underlineColorAndroid={'transparent'} autoFocus={true}/>
-            <Icon name="search" color={`rgb(${activeTheme})`} size={25} style={styles.Search}/>
+            <TextInput onChangeText={(text) => {handleActionChange('search',{content: text})}} style={{flex: 1, color: 'rgb(114,122,126)'}} underlineColorAndroid={'transparent'} autoFocus={true}/>
+            <Icon onPress={() => this.handleSearch()} name="search" color={`rgb(${activeTheme})`} size={25} style={styles.Search}/>
           </View>
           <LazyList
-            limit={3}
-            datas={mock}
-            showEmpty={true}
-            loadMore={() => { return (<View style={{ flex: 1, alignItems: 'center', paddingVertical: 10, justifyContent: 'center'}}><Text onPress={()=> this.navigateToSearch()} style={{color: 'rgb(197,198,204)'}}>更多图槽</Text></View>)}}
-            style={{marginTop: 10, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20, marginHorizontal: 10, borderRadius: 5, }}>
+          limit={3}
+          datas={relatedShot}
+          showEmpty={true}
+          loadMore={() => { return (<View style={{ flex: 1, alignItems: 'center', paddingVertical: 10, justifyContent: 'center'}}><Text onPress={()=> this.navigateToSearch()} style={{color: 'rgb(197,198,204)'}}>更多图槽</Text></View>)}}
+          style={{flex: 0 , justifyContent: 'space-between', marginTop: 10, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20, marginHorizontal: 10, borderRadius: 5, }}>
             <Item match={content} activeTheme={activeTheme}/>
           </LazyList>
         </View>
@@ -98,21 +103,22 @@ export default class CommentModal extends Component {
   }
 }
 
-const Item = (props) => {
+const Item = (props, context) => {
   const {match, activeTheme} = props
-  const {content} = props.item
+  const {app:{navigator}} = context
+  const {content, id, images} = props.item
   const index = content.indexOf(match)
-  console.log(index, match.length)
   if(index > 0){
     return (
-      <View style={{ paddingVertical: 10 }}>
+      <TouchableOpacity style={{ paddingVertical: 10, flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigator.push({ name: 'shot', params:{id}})}}>
         <Text style={{flex: 1, color: 'rgb(114,122,126)'}}>
           {content.substring(0, index)}
           <Text style={{color: `rgb(${activeTheme})` }}>{content.substring(index, index + match.length)}</Text>
           {content.substring(index+ match.length, 20)}
           {content.length > 20 && '...'}
         </Text>
-      </View>
+        { images.length > 0 && <Image source={{uri: images[0].url}} style={{width: 80, height: 50, borderRadius: 4,}} resizeMode="cover"/> }
+      </TouchableOpacity>
     )
   }
   return(
@@ -121,17 +127,12 @@ const Item = (props) => {
     </View>
   )
 }
+Item.contextTypes = {
+  app: PropTypes.object.isRequired,
+}
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
   }
-})
-
-let mock = [
-  {content: '没有别的意思，我只是想看看最高可以打多少个字，'},
-  {content: '前方高能'},
-  {content: '弹幕护体'},
-  {content: '记数菌已阵亡'},
-  {content: '以上企业均已破产'}
-]
+}

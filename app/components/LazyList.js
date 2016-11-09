@@ -47,7 +47,7 @@ export default class LazyList extends React.Component {
 
   render() {
     const {page} = this.state
-    const {datas, limit, loadMore, loadmoreLabel, showEmpty} = this.props
+    const {datas, limit, loadMore, loadmoreLabel, showEmpty, style} = this.props
     const overCount = datas.length - limit * page
     const isEmpty = datas.length === 0
 
@@ -62,10 +62,10 @@ export default class LazyList extends React.Component {
     }
 
     return (
-      <View style={{...styles.container, ...this.props.style}}>
+      <View style={{...styles.container, ...style}}>
         {this.renderItem()}
         {overCount > 0 && ( loadMore ? loadMore({overCount, next: this.nextPage}) :
-          <View stlye={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: this.props.style.backgroundColor}}>
+          <View stlye={{backgroundColor: this.props.style.backgroundColor}}>
             <Text style={{paddingVertical: 10, color:"rgb(153, 157, 175)"}} onPress={() => this.nextPage()}>{loadmoreLabel}({overCount})</Text>
           </View>)
         }
@@ -74,9 +74,8 @@ export default class LazyList extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
-    alignItems: 'center'
   },
-})
+}
