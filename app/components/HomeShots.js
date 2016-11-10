@@ -26,8 +26,8 @@ import {List, Card} from '../components'
     const query = obj2query({
       limit: 5
     })
-    const postsPagination = allshots[query] || { ids: [] }
-    const relatedShot  = postsPagination.ids.map(id => shots[id]);
+    const shotsPagination = allshots[query] || { ids: [] }
+    const relatedShot  = shotsPagination.ids.map(id => shots[id]);
 
     return {
       activeTheme,
@@ -67,6 +67,7 @@ export default class HomeShots extends Component {
           dataSource={dataSource}
           enableEmptySections={true}
           onEndReachedThreshold={30}
+          contentContainerStyle={{paddingHorizontal: 10, paddingTop: 10}}
           onEndReached={()=> this.onEndReached()}
           renderRow={item => <Card item={item} activeTheme={activeTheme}/>}
           />

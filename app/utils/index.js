@@ -18,3 +18,10 @@ export const fromPairs = (pairs)  => {
 }
 
 export const genRgb = () => [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)].join(',')
+
+
+export const checkDefine = (data) => {
+  let obj = {}
+  Object.keys(data).filter(key => data[key] !== undefined && data[key] !== '').map(key => { obj[key] = data[key]})
+  return obj
+}
