@@ -66,7 +66,7 @@ export default class LazyList extends React.Component {
         {this.renderItem()}
         {overCount > 0 && ( loadMore ? loadMore({overCount, next: this.nextPage}) :
           <View stlye={{backgroundColor: this.props.style.backgroundColor}}>
-            <Text style={{paddingVertical: 10, color:"rgb(153, 157, 175)"}} onPress={() => this.nextPage()}>{loadmoreLabel}({overCount})</Text>
+            <Text style={{paddingVertical: 10, color:"rgb(153, 157, 175)", alignSelf: 'center'}} onPress={() => this.nextPage()}>{loadmoreLabel}({overCount})</Text>
           </View>)
         }
       </View>

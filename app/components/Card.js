@@ -78,7 +78,7 @@ export default class Card extends Component {
 
   render() {
     const {user, activeTheme, image, item, comments} = this.props
-    const {content, latestComment, likesCount, liked} = item
+    const {content, latestComment, likesCount, liked, commentsCount, createdAt} = item
 
     const latestCommentData = latestComment.map(id => comments[id])
 
@@ -97,26 +97,35 @@ export default class Card extends Component {
               />
           </TouchableWithoutFeedback>
         }
-      <View style={styles.cardMD}>
-        <TouchableOpacity onPress={()=> this.handlePressAvatar()}>
-          <Avatar source={{uri: avatar}} style={styles.avatar} />
-        </TouchableOpacity>
-        <View style={styles.cardRG}>
-          <View style={styles.cardRGHD}>
-            <Text style={[{color: `rgb(${activeTheme})`}]}>{username}</Text>
-            <Text style={[{fontSize: 12, color: 'rgb(153, 157, 175)'}]}>刚刚</Text>
-            </View>
-          <View style={styles.cardRGMD}>
+        <View style={styles.cardMD}>
+          <View style={styles.cardMDHD}>
             <Text numberOfLines={4}>{content}</Text>
           </View>
-          <View style={styles.cardRGFT}>
-            <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>{likesCount}人点赞</Text>
-            <View style={styles.cardRGFTRG}>
+          <View style={styles.cardMDMD}>
+            <TouchableOpacity onPress={()=> this.handlePressAvatar()} style={{ flexDirection: 'row', justifyContent: 'center'}}>
+              <Avatar source={{uri: avatar}} style={styles.avatar} size={35}/>
+              <Text style={[{color: `rgb(${activeTheme})`}]}>{username}</Text>
+            </TouchableOpacity>
+            <View style={styles.cardMDMDRG}>
               <Button active={liked} icon={<Icon name="favorite"/>} label="点赞" onPress={() => this.handleLike()}/>
               <Button active={latestComment.length > 0} icon={<Icon name="mode-comment"/>} label="评论" onPress={() => this.CommentOnShot()}/>
             </View>
           </View>
-        </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Icon name="favorite" size={8} color="white" style={{ borderRadius: 10, padding: 2, marginRight:4,  backgroundColor: 'rgb(153, 157, 175)',}}/>
+                <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>{likesCount}</Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
+                <Icon name="remove-red-eye" size={8} color="white" style={{ borderRadius: 10, padding: 2, marginRight:4,  backgroundColor: 'rgb(153, 157, 175)',}}/>
+                <Text style={[{fontSize: 12,color: 'rgb(153, 157, 175)'}]}>
+                  {commentsCount}
+                </Text>
+              </View>
+            </View>
+            <Text style={[{fontSize: 12, color: 'rgb(153, 157, 175)'}]}>{createdAt}</Text>
+          </View>
         </View>
         <View stlye={styles.cardFT}>
           <LazyList
@@ -138,7 +147,7 @@ const CommentItem = (props) => {
   return (
     <View style={{flexDirection: 'row', flex: 1, paddingVertical: 10, alignItems: 'center', height: 50}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Avatar source={{uri: avatar}} style={styles.avatar}/>
+        <Avatar source={{uri: avatar}} size={25}/>
         <Text style={{color: `rgb(${activeTheme})`, fontSize: 14}}>{username}</Text>
       </View>
       <TouchableOpacity style={{flexDirection: 'row', flex: 1, marginLeft: 5}} onPress={() => CommentOnUser(user)}>
@@ -157,42 +166,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 10,
     borderRadius: 4,
-    elevation: 10
-  },
-  cardMD: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    flexDirection: 'row'
+    elevation: 5
   },
   avatar: {
-    height: 30,
-    width: 30,
     borderRadius: 100,
     marginRight: 5
   },
-  cardRG: {
+  cardMD: {
+    paddingHorizontal: 10,
+    paddingBottom: 20,
     flex: 1,
-    minHeight: 100,
-    marginLeft: 10,
     flexDirection: 'column',
     justifyContent: 'space-between'
   },
-  cardRGHD: {
-    flexDirection: 'row',
+  cardMDHD: {
     flex: 1,
-    justifyContent: 'space-between'
+    paddingVertical: 20
   },
-  cardRGMD: {
-    flex: 1
-  },
-  cardRGFT: {
+  cardMDMD: {
     flex: 1,
+    marginVertical: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: 40
   },
-  cardRGFTRG: {
+  cardMDMDRG: {
     flexDirection: 'row'
   },
   cardFT: {

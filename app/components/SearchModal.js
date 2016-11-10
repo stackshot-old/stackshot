@@ -61,21 +61,17 @@ export default class CommentModal extends Component {
   handleSearch = async () => {
     const {getSearchs, query} = this.props
     const result = await getSearchs({query})
-    if(result.type === 'SEARCH_SUCCESS'){
-        ToastAndroid.show('发送成功～～～～', ToastAndroid.SHORT)
-        this.handleToggle()
-        resetUpload()
-      }
   }
 
   navigateToSearch = () => {
-    const {query} = this.props
+    const {query, content} = this.props
     const {navigator} = this.context.app
     this.handleToggle()
     navigator.push({
       name: 'search',
       params:{
-        query
+        query,
+        content
       }
     })
   }
@@ -90,11 +86,11 @@ export default class CommentModal extends Component {
             <Icon onPress={() => this.handleSearch()} name="search" color={`rgb(${activeTheme})`} size={25} style={styles.Search}/>
           </View>
           <LazyList
-          limit={3}
-          datas={relatedShot}
-          showEmpty={true}
-          loadMore={() => { return (<View style={{ flex: 1, alignItems: 'center', paddingVertical: 10, justifyContent: 'center'}}><Text onPress={()=> this.navigateToSearch()} style={{color: 'rgb(197,198,204)'}}>更多图槽</Text></View>)}}
-          style={{flex: 0 , justifyContent: 'space-between', marginTop: 10, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20, marginHorizontal: 10, borderRadius: 5, }}>
+            limit={3}
+            datas={relatedShot}
+            showEmpty={true}
+            loadMore={() => { return (<View style={{ flex: 1, alignItems: 'center', paddingVertical: 10, justifyContent: 'center'}}><Text onPress={()=> this.navigateToSearch()} style={{color: 'rgb(197,198,204)'}}>更多图槽</Text></View>)}}
+            style={{flex: 0 , justifyContent: 'space-between', marginTop: 10, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20, marginHorizontal: 10, borderRadius: 5, }}>
             <Item match={content} activeTheme={activeTheme}/>
           </LazyList>
         </View>

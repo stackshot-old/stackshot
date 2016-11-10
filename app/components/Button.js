@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     marginLeft: 10,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 15,
     borderRadius: 100
   },
   label: {

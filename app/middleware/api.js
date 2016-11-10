@@ -2,7 +2,7 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-export const API_ROOT = `http://192.168.5.10:7999`
+export const API_ROOT = `http://192.168.5.7:7999`
 
 
 // Extracts the next page URL from Github API response.
