@@ -41,6 +41,10 @@ import {obj2query} from '../utils'
 )
 export default class Search extends React.Component {
 
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
+  }
+
   onEndReached = () => {
     const {getSearchs, query} = this.props
     InteractionManager.runAfterInteractions(() => {
@@ -66,7 +70,7 @@ export default class Search extends React.Component {
         <View style={{position: 'absolute', height: 300, width:screen.width, backgroundColor: `rgb(${activeTheme})`}}></View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10,}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon name="arrow-back" color="white" size={25} style={{marginHorizontal:10}}/><Text style={{color: 'white'}}>{` “${content}” 的搜索结果`}</Text>
+            <Icon name="arrow-back" color="white" size={25} style={{marginHorizontal:10}} onPress={() => {this.context.app.navigator.pop()}}/><Text style={{color: 'white'}}>{` “${content}” 的搜索结果`}</Text>
           </View>
           <Icon name="search" color="white" size={25} style={{marginHorizontal:10}} onPress={() => this.handleSearch()}/>
         </View>

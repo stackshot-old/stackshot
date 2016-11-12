@@ -21,6 +21,7 @@ export default class Theme extends React.Component {
     super(props)
     this.state = {
       queue: [
+      '250, 114, 131',
       '244, 67, 54','233, 30, 99',
       '156, 39, 176','63, 81, 181',
       '33, 150, 243','3, 169, 244',

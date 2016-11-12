@@ -15,7 +15,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import {Button, Avatar, List, LazyList} from '../components'
+import {Button, Avatar, List, LazyList, TimeAgo} from '../components'
 import {handleActionChange, like} from '../actions'
 
 @connect(
@@ -45,6 +45,10 @@ export default class Card extends Component {
     app: PropTypes.object.isRequired,
   }
 
+  static defaultProps = {
+    showList: true
+  }
+
   CommentOnShot = () => {
     const {handleActionChange, item:{id}} = this.props
     LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
@@ -70,14 +74,21 @@ export default class Card extends Component {
   }
 
   handlePressShot = () => {
+    if(this.props.stopNavigator){
+      return
+    }
+    const {item: {id}} = this.props
     const {navigator} = this.context.app
     navigator.push({
-      name: 'shot'
+      name: 'shot',
+      params: {
+        id
+      }
     })
   }
 
   render() {
-    const {user, activeTheme, image, item, comments} = this.props
+    const {user, activeTheme, image, item, comments, showList} = this.props
     const {content, latestComment, likesCount, liked, commentsCount, createdAt} = item
 
     const latestCommentData = latestComment.map(id => comments[id])
@@ -87,7 +98,7 @@ export default class Card extends Component {
     let imgWidth = ScreenWidth - 20
 
     return (
-      <View style={styles.card}>
+      <View style={[styles.card, this.props.style]}>
         {image &&
           <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
               <Image
@@ -108,7 +119,7 @@ export default class Card extends Component {
             </TouchableOpacity>
             <View style={styles.cardMDMDRG}>
               <Button active={liked} icon={<Icon name="favorite"/>} label="点赞" onPress={() => this.handleLike()}/>
-              <Button active={latestComment.length > 0} icon={<Icon name="mode-comment"/>} label="评论" onPress={() => this.CommentOnShot()}/>
+              <Button active={commentsCount > 0} icon={<Icon name="mode-comment"/>} label="评论" onPress={() => this.CommentOnShot()}/>
             </View>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -124,17 +135,18 @@ export default class Card extends Component {
                 </Text>
               </View>
             </View>
-            <Text style={[{fontSize: 12, color: 'rgb(153, 157, 175)'}]}>{createdAt}</Text>
+            <TimeAgo time={createdAt} language="zh" style={{fontSize: 12, color: 'rgb(153, 157, 175)'}}/>
           </View>
         </View>
-        <View stlye={styles.cardFT}>
+        {showList &&
+          <View stlye={styles.cardFT}>
           <LazyList
             datas={latestCommentData}
             limit={3}
             style={{backgroundColor:'rgb(242,244,252)', paddingHorizontal: 10}}>
             <CommentItem CommentOnUser={(user) => this.CommentOnUser(user)} activeTheme={activeTheme}/>
           </LazyList>
-        </View>
+        </View>}
       </View>
     )
   }

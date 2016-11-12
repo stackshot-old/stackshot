@@ -2,12 +2,12 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-export const API_ROOT = `http://192.168.5.7:7999`
+export const API_ROOT = `http://192.168.5.8:7999`
 
 
 // Extracts the next page URL from Github API response.
 function getBeforeTime(response, json) {
-  if(Array.isArray(json)){
+  if(Array.isArray(json) && json.length > 0){
     const {createdAt} = json.slice(-1)[0]
     if(createdAt){
       return createdAt
@@ -66,6 +66,9 @@ shotSchema.define({
   latestComment: arrayOf(commentSchema)
 })
 
+commentSchema.define({
+  user: userSchema,
+})
 
 export const Schemas = {
   USER: userSchema,
