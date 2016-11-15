@@ -11,14 +11,14 @@ import {Avatar, TimeAgo} from '../components'
   (state, props) => {
     const {
       entities: {users},
-      theme: {activeTheme}
+      theme: {themeColor}
     } = state
     const {item} = props
     const userId = item.user
 
     return {
       user: users[userId],
-      activeTheme
+      themeColor
     }
   }
 )
@@ -29,7 +29,7 @@ export default class CommentItem extends Component {
   }
 
   render() {
-    const {activeTheme, user, item} = this.props
+    const {themeColor, user, item} = this.props
     const {content, createdAt} = item
     const {avatar, username} = user
 
@@ -38,7 +38,7 @@ export default class CommentItem extends Component {
         <Avatar source={{uri: avatar}} size={25}/>
         <View style={{flex: 1, flexDirection: 'column', justifyContent: 'space-between', marginLeft: 10}}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{color: `rgb(${activeTheme})`}}>{username}</Text>
+            <Text style={{color: `rgb(${themeColor})`}}>{username}</Text>
             <TimeAgo time={createdAt} language="zh" style={{fontSize: 12, color: 'rgb(153, 157, 175)'}}/>
           </View>
           <Text style={{color: 'rgb(153, 157, 175)'}}>{content}</Text>

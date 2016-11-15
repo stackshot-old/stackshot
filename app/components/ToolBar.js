@@ -18,12 +18,13 @@ import {Avatar} from '../components'
   state => {
     const {
       auth:{ user},
-      theme: {activeTheme},
+      theme: {themeColor, baseColor},
       common: {toolbar:{ activeIndex }}
     } = state
     return {
       activeIndex,
-      activeTheme,
+      themeColor,
+      baseColor,
       user
     }
   },
@@ -69,17 +70,17 @@ export default class ToolBar extends Component {
   }
 
   render() {
-    const {activeTheme, activeIndex, user} = this.props
+    const {themeColor, baseColor, activeIndex, user} = this.props
     const { username, avatar } = user
     return (
-      <View style={styles.Container}>
+      <View style={[styles.Container, {backgroundColor: `rgb(${baseColor})`}]}>
         <TouchableOpacity onPress={()=> this.handlePressAvatar()}>
           <Avatar source={{uri: avatar ? avatar : 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={40} style={{marginLeft: 10}}/>
         </TouchableOpacity>
         <View style={styles.List}>
-          <Item icon='home' text="首页" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>
-          <Item icon='explore' text="发现" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
-          <Item icon='textsms' text="消息" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} activeTheme={activeTheme}/>
+          <Item icon='home' text="首页" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} themeColor={themeColor}/>
+          <Item icon='explore' text="发现" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} themeColor={themeColor}/>
+          <Item icon='textsms' text="消息" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} themeColor={themeColor}/>
         </View>
         <Icon name="search" color="rgb(151,176,200)" size={25} style={styles.Search} onPress={() => this.handleSearch()}/>
       </View>
@@ -95,12 +96,12 @@ class Item extends Component {
   }
 
   render() {
-    const {icon, text, ouTouch, index, activeIndex, activeTheme} = this.props
+    const {icon, text, ouTouch, index, activeIndex, themeColor} = this.props
     return (
       <TouchableOpacity
         style={[styles.TouchItem]}
         onPress={() => this.onPress()}>
-        <View style={[styles.ItemView,{backgroundColor: activeIndex === index ? `rgb(${activeTheme})` : 'transparent'}]}>
+        <View style={[styles.ItemView,{backgroundColor: activeIndex === index ? `rgb(${themeColor})` : 'transparent'}]}>
           <Icon name={icon} size={20} color={activeIndex === index ? `#fff`  : 'rgb(151,176,200)'}/>
           <Text style={[styles.ItemText, { color: activeIndex === index ? `#fff` : 'rgb(151,176,200)'}]}>{text}</Text>
         </View>
@@ -115,8 +116,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgb(208,214,226)'
   },
   List: {
     flexDirection: 'row',

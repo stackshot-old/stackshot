@@ -1,6 +1,6 @@
 import * as ActionTypes from '../actions'
 
-export default function theme( state={ activeTheme: '250,114,131', storeTheme: '' }, action ) {
+export default function theme( state={ baseColor: '57,61,74', themeColor: '250,114,131'}, action ) {
   switch (action.type) {
     case ActionTypes.HANDLE_THEME_CHANGE:
       return {...state, ...action.data}

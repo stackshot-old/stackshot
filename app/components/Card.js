@@ -22,12 +22,13 @@ import {handleActionChange, like} from '../actions'
   (state, props) => {
     const {
       entities: {users, comments},
-      theme: {activeTheme}
+      theme: {themeColor, baseColor}
     } = state
     const {item, item:{user, images}} = props
     return {
       user: users[user],
-      activeTheme,
+      themeColor,
+      baseColor,
       image: images[0],
       comments,
       item
@@ -88,7 +89,7 @@ export default class Card extends Component {
   }
 
   render() {
-    const {user, activeTheme, image, item, comments, showList} = this.props
+    const {user, themeColor, baseColor, image, item, comments, showList} = this.props
     const {content, latestComment, likesCount, liked, commentsCount, createdAt} = item
 
     const latestCommentData = latestComment.map(id => comments[id])
@@ -98,7 +99,7 @@ export default class Card extends Component {
     let imgWidth = ScreenWidth - 20
 
     return (
-      <View style={[styles.card, this.props.style]}>
+      <View style={[styles.card, this.props.style, {backgroundColor: `rgba(${baseColor}, 0.8)`}]}>
         {image &&
           <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
               <Image
@@ -115,7 +116,7 @@ export default class Card extends Component {
           <View style={styles.cardMDMD}>
             <TouchableOpacity onPress={()=> this.handlePressAvatar()} style={{ flexDirection: 'row', justifyContent: 'center'}}>
               <Avatar source={{uri: avatar}} style={styles.avatar} size={35}/>
-              <Text style={[{color: `rgb(${activeTheme})`}]}>{username}</Text>
+              <Text style={[{color: `rgb(${themeColor})`}]}>{username}</Text>
             </TouchableOpacity>
             <View style={styles.cardMDMDRG}>
               <Button active={liked} icon={<Icon name="favorite"/>} label="点赞" onPress={() => this.handleLike()}/>
@@ -143,8 +144,8 @@ export default class Card extends Component {
           <LazyList
             datas={latestCommentData}
             limit={3}
-            style={{backgroundColor:'rgb(242,244,252)', paddingHorizontal: 10}}>
-            <CommentItem CommentOnUser={(user) => this.CommentOnUser(user)} activeTheme={activeTheme}/>
+            style={{backgroundColor:`rgba(${baseColor}, 0.6)`, paddingHorizontal: 10}}>
+            <CommentItem CommentOnUser={(user) => this.CommentOnUser(user)} themeColor={themeColor}/>
           </LazyList>
         </View>}
       </View>
@@ -153,14 +154,14 @@ export default class Card extends Component {
 }
 
 const CommentItem = (props) => {
-  const {CommentOnUser, activeTheme} = props
+  const {CommentOnUser, themeColor} = props
   const {content, user, replyTo} = props.item || {}
   const {username, avatar, id} = user || {}
   return (
     <View style={{flexDirection: 'row', flex: 1, paddingVertical: 10, alignItems: 'center', height: 50}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Avatar source={{uri: avatar}} size={25}/>
-        <Text style={{color: `rgb(${activeTheme})`, fontSize: 14}}>{username}</Text>
+        <Text style={{color: `rgb(${themeColor})`, fontSize: 14}}>{username}</Text>
       </View>
       <TouchableOpacity style={{flexDirection: 'row', flex: 1, marginLeft: 5}} onPress={() => CommentOnUser(user)}>
         <View>

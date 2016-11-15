@@ -57,7 +57,8 @@ export default class Routes extends Component {
     const {handleActionChange} = this.props
     const theme = await AsyncStorage.getItem('storeTheme')
     if(theme) {
-      handleActionChange('theme',{activeTheme: theme, storeTheme: theme})
+      const {baseColor, themeColor} = JSON.parse(theme)
+      handleActionChange('theme',{themeColor, baseColor})
     }
   }
 

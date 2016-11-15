@@ -24,7 +24,7 @@ import {obj2query} from '../utils'
     const {
       pagination: { allcomments },
       entities:{comments, shots},
-      theme: {activeTheme},
+      theme: {themeColor},
     } = state
     const {id} = props
     const query = obj2query({
@@ -37,7 +37,7 @@ import {obj2query} from '../utils'
     return {
       relatedComments,
       isFetching,
-      activeTheme,
+      themeColor,
       shot: shots[id],
       query,
       id,
@@ -68,14 +68,14 @@ export default class Message extends React.Component {
   }
 
   render() {
-    const {relatedComments, activeTheme, content, shot} = this.props
+    const {relatedComments, themeColor, content, shot} = this.props
     let ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2,
     })
     let dataSource = ds.cloneWithRows(relatedComments)
     return (
       <View style={{flex: 1}}>
-          <View style={{position: 'absolute', height: 300, width:screen.width, backgroundColor: `rgb(${activeTheme})`}}></View>
+          <View style={{position: 'absolute', height: 300, width:screen.width, backgroundColor: `rgb(${themeColor})`}}></View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10,}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Icon name="arrow-back" color="white" size={25} style={{marginHorizontal:10}} onPress={() => {this.context.app.navigator.pop()}}/><Text style={{color: 'white'}}></Text>
@@ -85,7 +85,7 @@ export default class Message extends React.Component {
         <View style={{flex: 1, marginHorizontal: 10, marginTop: 10}}>
           <ScrollView style={{elevation: 20, backgroundColor:'rgb(242,244,252)'}} showsVerticalScrollIndicator={false}>
             <ListView
-              renderHeader={() => <Card style={{elevation: 0}} item={shot} activeTheme={activeTheme} showList={false} stopNavigator={true}/>}
+              renderHeader={() => <Card style={{elevation: 0}} item={shot} themeColor={themeColor} showList={false} stopNavigator={true}/>}
               dataSource={dataSource}
               showsVerticalScrollIndicator={false}
               enableEmptySections={true}
@@ -95,7 +95,7 @@ export default class Message extends React.Component {
               renderRow={item => <CommentItem item={item}/>}/>
           </ScrollView>
         </View>
-        <StatusBar backgroundColor={`rgb(${activeTheme})`} animated={true}/>
+        <StatusBar backgroundColor={`rgb(${themeColor})`} animated={true}/>
       </View>
     )
   }
