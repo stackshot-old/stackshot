@@ -2,10 +2,10 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-export const API_ROOT = `http://192.168.5.8:7999`
+export const API_ROOT = `http://192.168.5.6:7999`
 
 
-// Extracts the next page URL from Github API response.
+// Extracts the nexts page URL from Github API response.
 function getBeforeTime(response, json) {
   if(Array.isArray(json) && json.length > 0){
     const {createdAt} = json.slice(-1)[0]

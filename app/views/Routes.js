@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 // views
-import {Home, Signin, User, ShotDetail, Message, Found, Signup, Theme, Search} from '../views'
+import {Home, User, ShotDetail, Message, Found, SignInAndSignUp, Theme, Search} from '../views'
 import {SliderScreen, StatusBar, SearchModal, CommentModal} from '../components'
 import {handleActionChange, connectWebScoket} from '../actions'
 import {API_ROOT} from '../middleware/api'
@@ -103,9 +103,8 @@ export default class Routes extends Component {
         case 'home' :
           return <Home {...route.params} />
         case 'signin':
-          return <Signin {...route.params}/>
         case 'signup':
-          return <Signup {...route.params}/>
+          return <SignInAndSignUp {...route.params}/>
         case 'user':
           return <User {...route.params}/>
         case 'shot':
