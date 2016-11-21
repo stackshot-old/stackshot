@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  StatusBar,
   LayoutAnimation,
   TouchableOpacity
 } from 'react-native';
@@ -52,6 +53,7 @@ export default class Home extends Component {
     const {count} = newShot
     return (
       <View style={{flex: 1}}>
+        <StatusBar backgroundColor={`white`} animated={true}/>
         <ToolBar />
         {count > 0 && <View><Text>{`有新的帖子(${count})`}</Text></View>}
         <HomeShots />

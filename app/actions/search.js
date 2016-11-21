@@ -1,6 +1,5 @@
 import { CALL_API, Schemas } from '../middleware/api'
 import { getHeader } from '../actions'
-import {checkDefine} from '../utils'
 
 
 export const GET_SEARCHS_REQUEST = 'GET_SEARCHS_REQUEST'
