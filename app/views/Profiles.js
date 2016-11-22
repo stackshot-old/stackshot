@@ -2,11 +2,16 @@ import React, {PropTypes} from 'react'
 import {
   View,
   Text,
+  Picker,
+  TextInput,
   StatusBar,
   Dimensions,
   StyleSheet,
+  ScrollView,
+  ToastAndroid,
   AsyncStorage,
-  TouchableOpacity
+  TouchableOpacity,
+  DatePickerAndroid
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -16,7 +21,7 @@ import ImagePicker from 'react-native-image-crop-picker'
 import {API_ROOT} from '../middleware/api'
 
 import {updateProfiles} from '../actions'
-import {Avatar} from '../components'
+import {Avatar, Constellation} from '../components'
 
 const screen = Dimensions.get('window')
 
@@ -41,8 +46,11 @@ export default class Profiles extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      isChangeAvatar: false,
-      avatar: ''
+      avatar: null,
+      gender: null,
+      birthday: null,
+      website: null,
+      signature: null
     }
   }
 
@@ -63,25 +71,40 @@ export default class Profiles extends React.Component {
     .then((res) => res.json())
     if(Array.isArray(upload)){
       const [image] = upload
-      this.setState({ avatar: `http://${image.url}`, isChangeAvatar: true})
+      this.setState({ avatar: `http://${image.url}`})
     }
   }
 
-  SaveAndUpdate = async () => {
-    const {avatar, username, gender, website, signature} = this.state
-    const {updateProfiles} = this.props
-    const result = await updateProfiles({avatar, username, gender, website, signature})
+  saveAndUpdate = async () => {
+    const {avatar, gender, website, signature, birthday} = this.state
+    const {updateProfiles, user:{token}} = this.props
+    const result = await updateProfiles({avatar, gender, website, signature, birthday})
     if(result.type === 'UPDATE_PROFILES_SUCCESS'){
-      await AsyncStorage.setItem('user', JSON.stringify(result.response.entities.users[result.response.result]))
+      ToastAndroid.show('修改成功',ToastAndroid.SHORT)
+      const {response:{ result:{user}, entities:{ users } }} = result
+      const me = users[user]
+      await AsyncStorage.setItem('user', JSON.stringify({...me, token}))
+    }
+  }
+
+  setDate = async() => {
+    const {action, year, month, day} = await DatePickerAndroid.open({
+
+      date: new Date(this.props.user.date || Date.now() - 630720000000)
+    })
+
+    if (action !== DatePickerAndroid.dismissedAction) {
+      this.setState({ birthday: new Date(Date.parse(`${year}/${month + 1}/${day}`)).toISOString() })
     }
   }
 
   render() {
     const {isChangeAvatar} = this.state
     const { themeColor, user} = this.props
-    const {avatar, username, gender, date, website, signature} = user
+    const {avatar, username, gender, birthday, website, signature} = user
+
     return (
-      <View style={{backgroundColor: 'rgb(230,234,244)', flex: 1}}>
+      <ScrollView style={{backgroundColor: 'rgb(230,234,244)', flex: 1}}>
         <StatusBar backgroundColor={`rgb(${themeColor})`} animated={true}/>
           <View style={{position: 'absolute', height: 50, width:screen.width, backgroundColor: `rgb(${themeColor})`}}></View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10,}}>
@@ -89,48 +112,60 @@ export default class Profiles extends React.Component {
               <Icon name="arrow-back" color="white" size={25} style={{marginHorizontal:10}} onPress={() => {this.context.app.navigator.pop()}}/>
               <Text style={{color: 'white'}}>资料设置</Text>
             </View>
-            <TouchableOpacity onPress={() => this.SaveAndUpdate()}>
+            <TouchableOpacity onPress={() => this.saveAndUpdate()}>
               <Text style={{color: 'white', marginHorizontal: 10}}>保存</Text>
             </TouchableOpacity>
           </View>
           <View style={{marginHorizontal: 10, marginTop: 10}}>
             <Ul>
-              <Li style={{height: 80}} onPress={() => this.handleUpLoadAvatar()}>
+              <TouchableOpacity style={[styles.paper, {height: 80}]} onPress={() => this.handleUpLoadAvatar()}>
                 <Text style={{color: 'rgb(174,173,183)'}}>头像设置</Text>
-                {
-                  isChangeAvatar ?
-                  <Avatar source={{uri: this.state.avatar}} size={30}/> :
-                  <Avatar source={{uri: avatar}} size={30}/>
-                }
-              </Li>
-              <Li style={{borderBottomWidth: 0}}>
+                  <Avatar source={{uri: this.state.avatar || avatar}} size={30}/>
+              </TouchableOpacity>
+              <View style={[styles.paper, {borderBottomWidth: 0}]}>
                 <Text style={{color: 'rgb(174,173,183)'}}>昵称</Text>
                 <Text>{username}</Text>
-              </Li>
+              </View>
             </Ul>
             <Ul>
-              <Li>
+              <View style={styles.paper}>
                 <Text style={{color: 'rgb(174,173,183)'}}>性别</Text>
-                <Text>{gender || '不知道'}</Text>
-              </Li>
-              <Li>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text>{this.state.gender || gender || '不知道'}</Text>
+                  <Picker
+                    mode="dropdown"
+                    style={{width: 50}}
+                    selectedValue={this.state.gender || gender || '不知道'}
+                    onValueChange={value => this.setState({gender: value})}>
+                    <Picker.Item label="男" value="男" />
+                    <Picker.Item label="不知道" value="不知道" />
+                    <Picker.Item label="女" value="女" />
+                  </Picker>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.paper} onPress={() => this.setDate()}>
                 <Text style={{color: 'rgb(174,173,183)'}}>星座</Text>
-                <Text>{date || '不知道'}</Text>
-              </Li>
-              <Li>
+                <Constellation language="zh" date={this.state.birthday || birthday} />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.paper]}>
                 <Text style={{color: 'rgb(174,173,183)'}}>个人网站</Text>
-                <Text>{website || '不知道'}</Text>
-              </Li>
-              <Li>
+                <TextInput
+                  onChangeText={website => this.setState({website})}
+                  style={{flex: 1,textAlign: 'right', color: 'rgba(0,0,0,.5)'}} underlineColorAndroid='transparent'>{website || '不知道'}</TextInput>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.paper}>
                 <Text style={{color: 'rgb(174,173,183)'}}>个人签名</Text>
-                <Text>{signature || '不知道'}</Text>
-              </Li>
+                <TextInput
+                  onChangeText={signature => this.setState({signature})}
+                  style={{flex: 1,textAlign: 'right', color: 'rgba(0,0,0,.5)'}} underlineColorAndroid='transparent'>{signature || '不知道'}</TextInput>
+              </TouchableOpacity>
             </Ul>
           </View>
-      </View>
+      </ScrollView>
     )
   }
 }
+
 
 const Ul = ({children, style}) => (
   <View style={[{marginVertical: 8, backgroundColor: 'white', elevation: 3, borderRadius: 2, paddingHorizontal: 10},style]}>
@@ -138,18 +173,14 @@ const Ul = ({children, style}) => (
   </View>
 )
 
-const Li = ({children, style, onPress}) => (
-  <TouchableOpacity
-    onPress={() => onPress && onPress()}
-    style={[{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, height: 70, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: 'rgb(239,239,239)'}, style]}>
-    {children}
-  </TouchableOpacity>
-)
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  paper: {
+    flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, height: 70, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: 'rgb(239,239,239)'
   }
 })

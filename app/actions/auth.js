@@ -52,7 +52,7 @@ export const updateProfiles = (data) => (dispatch, getState) => {
     [CALL_API]: {
       types: [ UPDATE_PROFILES_REQUEST, UPDATE_PROFILES_SUCCESS, UPDATE_PROFILES_FAILURE ],
       endpoint: `/user/profiles`,
-      schema: Schemas.USER,
+      schema: {user: Schemas.USER},
       request: {
         method: 'PUT',
         headers: {...getHeader(), ...{Authorization: `Bearer ${token}`}},

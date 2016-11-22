@@ -250,7 +250,7 @@ export class SignUp extends React.Component {
     }
 
     const result = await signup({password, email, username})
-    if(result.type === "SIGNIN_SUCCESS"){
+    if(result.type === "SIGNUP_SUCCESS"){
       const {response:{entities:{users}, result:{user, token}}} = result
       const me = users[user]
       const saved = await AsyncStorage.setItem('user', JSON.stringify({...me, token}))
@@ -331,7 +331,7 @@ export class SignUp extends React.Component {
               <TouchableOpacity onPress={()=> setStatus('signup-1') }>
                 <Text style={{color: `rgb(${themeColor})`}}>上一步</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={()=> { this.handleSignUp()}} disabled={(!email && !username)}>
+              <TouchableOpacity onPress={()=> this.handleSignUp()} disabled={(!password && !verifyPassword)}>
                 <Icon name="arrow-forward" color={ (password && verifyPassword ) ? `rgb(${themeColor})` : 'rgb(241,243,250)'}  size={30} style={{marginHorizontal:10}} />
               </TouchableOpacity>
             </View>

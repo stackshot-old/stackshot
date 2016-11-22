@@ -27,7 +27,6 @@ function callApi(endpoint, schema, request) {
       if (!response.ok) {
         return Promise.reject(json)
       }
-
       const camelizedJson = camelizeKeys(json)
       const before = getBeforeTime(response, json)
       return Object.assign({},
