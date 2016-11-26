@@ -25,3 +25,6 @@ export const checkDefine = (data) => {
   Object.keys(data).filter(key => data[key] !== undefined && data[key] !== '' && data[key] !== null).map(key => { obj[key] = data[key]})
   return obj
 }
+
+
+export const genUniqueString = () => Math.random().toString(36).substr(2, 10)

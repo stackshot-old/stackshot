@@ -79,11 +79,11 @@ export default class ShotModal extends Component {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data'
     },[{ name:'image', filename: 'image.png',type: mime, data: RNFetchBlob.wrap(path)}])
-    .uploadProgress({ interval : 250 }, (written, total) => {
-    }).then((res) => res.json())
+    .then((res) => res.json())
     if(Array.isArray(upload)){
       upload.map(o=> {
-        addImage({url: o.url, width: width, height: height})
+        const url = o.url.includes('http://') ? o.url : `http://${o.url}`
+        addImage({url: url, width: width, height: height})
       })
     }
   }
@@ -105,6 +105,7 @@ export default class ShotModal extends Component {
 
 const Uploader = (props) => {
   const {images, themeColor, handleToggle, handleSend, handleUpLoad} = props
+  console.log(images)
   if(images.length === 0){
     return(
       <View style={{backgroundColor: `rgb(${themeColor})`, minHeight: 200, borderTopLeftRadius: 4, borderTopRightRadius:4, paddingHorizontal: 10, paddingVertical: 10}}>
@@ -125,9 +126,10 @@ const Uploader = (props) => {
       </View>
     )
   }else {
+    const [image] = images
     return (
       <View style={{minHeight: 200, borderTopLeftRadius: 4, borderTopRightRadius:4}}>
-        <Image source={{uri: images[0].url}} style={{width: screen.width - 20, height: 200, left: 0, position: 'absolute', borderTopLeftRadius: 4, borderTopRightRadius:4 }} resizeMode="cover"/>
+        <Image source={{uri: image.url}} style={{width: screen.width - 20, height: 200, left: 0, position: 'absolute', borderTopLeftRadius: 4, borderTopRightRadius:4 }} resizeMode="cover"/>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',width: screen.width- 20, paddingHorizontal: 10, paddingVertical: 10}}>
           <TouchableOpacity onPress={handleToggle} style={{ width:30, height: 30, borderRadius: 30}}>
             <Icon name="close" color={'white'} size={30}/>

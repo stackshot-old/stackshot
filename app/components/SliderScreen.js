@@ -69,12 +69,15 @@ export default class SliderScreen extends Component {
     drawer.closeDrawer()
   }
 
-  handlePressAvatar = () => {
+  handlePressAvatar = (uid) => {
     const {checkAuth, navigator, drawer} = this.context.app
     if(checkAuth()){
       drawer.closeDrawer()
       navigator.push({
-        name: 'user'
+        name: 'user',
+        params:{
+          uid
+        }
       })
     }
   }
@@ -112,7 +115,7 @@ export default class SliderScreen extends Component {
       <ScrollView style={{backgroundColor: `rgb(${baseColor})`}}>
       <View style={styles.Container}>
         <View style={styles.SliderHD}>
-          <TouchableOpacity onPress={() => this.handlePressAvatar()}>
+          <TouchableOpacity onPress={() => this.handlePressAvatar(user.id)}>
             <Avatar source={{uri: avatar ? avatar : 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
           </TouchableOpacity>
           <Text>{username ? username : 'Miku'}</Text>

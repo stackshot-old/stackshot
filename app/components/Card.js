@@ -67,10 +67,13 @@ export default class Card extends Component {
     const result = await like({id, liked})
   }
 
-  handlePressAvatar = () => {
+  handlePressAvatar = (uid) => {
     const {navigator} = this.context.app
     navigator.push({
-      name: 'user'
+      name: 'user',
+      params:{
+        uid
+      }
     })
   }
 
@@ -99,7 +102,7 @@ export default class Card extends Component {
     let imgWidth = ScreenWidth - 20
 
     return (
-      <View style={[styles.card, this.props.style, {backgroundColor: `rgba(${baseColor}, 0.8)`}]}>
+      <View style={[styles.card, this.props.style, {backgroundColor: `rgba(${baseColor}, 1)`}]}>
         {image &&
           <TouchableWithoutFeedback onPress={() => this.handlePressShot()}>
               <Image
@@ -114,7 +117,7 @@ export default class Card extends Component {
             <Text numberOfLines={4}>{content}</Text>
           </View>
           <View style={styles.cardMDMD}>
-            <TouchableOpacity onPress={()=> this.handlePressAvatar()} style={{ flexDirection: 'row', justifyContent: 'center'}}>
+            <TouchableOpacity onPress={()=> this.handlePressAvatar(user.id)} style={{ flexDirection: 'row', justifyContent: 'center'}}>
               <Avatar source={{uri: avatar}} style={styles.avatar} size={35}/>
               <Text style={[{color: `rgb(${themeColor})`}]}>{username}</Text>
             </TouchableOpacity>

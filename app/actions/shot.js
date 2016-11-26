@@ -7,18 +7,20 @@ export const GET_SHOTS_SUCCESS = 'GET_SHOTS_SUCCESS'
 export const GET_SHOTS_FAILURE = 'GET_SHOTS_FAILURE'
 
 export const getShots = (data) => (dispatch, getState) => {
-  const {query, next} = data || {}
+  const {query, next, baseUrl} = data || {}
   let {
     isFetching,
     before = '',
-    nextPageUrl = `/shots?${query}`
+    nextPageUrl = baseUrl ? `/${baseUrl}?${query}` : `/shots?${query}`
   } = getState().pagination.allshots[query] || {}
+
   if(next) {
-    nextPageUrl = `/shots?${query}&before=${before}`
+    nextPageUrl = baseUrl ? `/${baseUrl}?${query}&before=${before}` : `/shots?${query}&before=${before}`
   }
+
   if(!isFetching){
     return dispatch({
-      query,
+      query: baseUrl ? `${baseUrl}?${query}` : query,
       [CALL_API]: {
         types: [ GET_SHOTS_REQUEST, GET_SHOTS_SUCCESS, GET_SHOTS_FAILURE ],
         endpoint: nextPageUrl,
@@ -56,6 +58,7 @@ export const addShot = (data) => (dispatch, getState) => {
 
 export const ADD_IMAGE = 'ADD_IMAGE'
 export const addImage = (data) => {
+  console.log(data)
   return {
     type: ADD_IMAGE,
     data
