@@ -67,6 +67,12 @@ export default class Message extends React.Component {
     })
   }
 
+  CommentOnUser = (user) => {
+    const {handleActionChange, shot: {id}} = this.props
+    LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
+    handleActionChange('comment',{ isComment: true, shot: id, replyTo: user.id, placeholder: `@${user.username}`})
+  }
+
   render() {
     const {relatedComments, themeColor, content, shot} = this.props
     let ds = new ListView.DataSource({
@@ -92,7 +98,7 @@ export default class Message extends React.Component {
               onEndReachedThreshold={30}
               contentContainerStyle={{backgroundColor:'rgb(242,244,252)', elevation: 10, paddingBottom: 20}}
               onEndReached={()=> this.onEndReached()}
-              renderRow={item => <CommentItem item={item}/>}/>
+              renderRow={item => <CommentItem item={item} onPress={(user) => this.CommentOnUser(user)}/>}/>
           </ScrollView>
         </View>
         <StatusBar backgroundColor={`rgb(${themeColor})`} animated={true}/>

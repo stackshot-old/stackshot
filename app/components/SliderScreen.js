@@ -48,19 +48,19 @@ export default class SliderScreen extends Component {
     this.setState({ activeIndex: index })
     switch (index) {
       case 0:
-        navigator.push({name: 'home'})
+        navigator.immediatelyResetRouteStack([{name: 'home'}])
         break
       case 1:
         if(checkAuth()){
-          navigator.push({name: 'profiles'})
+          navigator.immediatelyResetRouteStack([{name: 'home'},{name: 'profiles'}])
         }
         break
       case 2:
-        navigator.push({name: 'theme'})
+        navigator.immediatelyResetRouteStack([{name: 'home'},{name: 'theme'}])
         break
       case 3:
         if(checkAuth()){
-          navigator.push({name: 'setting'})
+          navigator.immediatelyResetRouteStack([{name: 'home'},{name: 'setting'}])
         }
         break
       default:

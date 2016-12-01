@@ -2,7 +2,8 @@ import React, {PropTypes, Component} from 'react'
 import {
   View,
   Text,
-  StatusBar
+  StatusBar,
+  TouchableOpacity
 } from 'react-native'
 import {connect} from 'react-redux'
 import {Avatar, TimeAgo} from '../components'
@@ -29,20 +30,21 @@ export default class CommentItem extends Component {
   }
 
   render() {
-    const {themeColor, user, item} = this.props
+    const {themeColor, user, item, onPress} = this.props
     const {content, createdAt} = item
     const {avatar, username} = user
 
     return (
       <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10}}>
         <Avatar source={{uri: avatar}} size={25}/>
-        <View style={{flex: 1, flexDirection: 'column', justifyContent: 'space-between', marginLeft: 10}}>
+        <TouchableOpacity onPress={() => onPress(user)}
+          style={{flex: 1, flexDirection: 'column', justifyContent: 'space-between', marginLeft: 10}}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{color: `rgb(${themeColor})`}}>{username}</Text>
             <TimeAgo time={createdAt} language="zh" style={{fontSize: 12, color: 'rgb(153, 157, 175)'}}/>
           </View>
           <Text style={{color: 'rgb(153, 157, 175)'}}>{content}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     )
   }

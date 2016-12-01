@@ -2,25 +2,26 @@ import React, {PropTypes, Children} from 'react'
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   Dimensions,
   ScrollView,
   Animated,
   ListView,
+  PanResponder,
   TouchableOpacity,
   LayoutAnimation,
   TouchableNativeFeedback
 } from 'react-native'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {handleThemeChange} from '../actions'
-import {List} from '../components'
-import {genRgb} from '../utils'
+import {handleThemeChange} from '../../actions'
+import {SwiperView} from '../../components'
 
 const config = [
-  {key:'night', color: '57,61,74', baseColor: '57,61,74', themeColor: '33,33,33'},
-  {key:'pink', color: '250,119,134', baseColor: '255,255,255', themeColor: '250,119,134'},
-  {key:'pink', color: '98,137,250', baseColor: '255,255,255', themeColor: '98,137,250'},
+  {key:'night', img: require("./night.png"), color: '57,61,74', baseColor: '57,61,74', themeColor: '33,33,33'},
+  {key:'pink', img: require("./pink.png"), color: '250,119,134', baseColor: '255,255,255', themeColor: '250,119,134'},
+  {key:'blue', img: require("./blue.png"), color: '98,137,250', baseColor: '255,255,255', themeColor: '98,137,250'},
 ]
 
 const screen = Dimensions.get('window')
@@ -56,8 +57,7 @@ export default class Theme extends React.Component {
     handleThemeChange({baseColor, themeColor})
   }
 
-  onScroll = (value) => {
-    const select = Math.round(value)
+  onScroll = (select) => {
     if(select >= 0 ){
       LayoutAnimation.configureNext( LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY ) )
       this.setState({ select})
@@ -75,10 +75,10 @@ export default class Theme extends React.Component {
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
-          <SwiperView props={{ style: { flex: 1}}} containerWidth={ (screen.width - 80)} onScroll={(value) => this.onScroll(value)} select={select}>
-            <Item theme={night} label='夜间模式'/>
-            <Item theme={pink} label='少女粉'/>
-            <Item theme={blue} label='沉稳蓝'/>
+          <SwiperView props={{ style: { flex: 1}}} onScroll={(value) => this.onScroll(value)} >
+            <Item theme={night} select={select}/>
+            <Item theme={pink} select={select}/>
+            <Item theme={blue} select={select}/>
           </SwiperView>
         </View>
         <View style={{ position: 'relative', bottom: 0, width:screen.width, height: 150, alignItems: 'center'}}>
@@ -94,63 +94,16 @@ export default class Theme extends React.Component {
 }
 
 
-class SwiperView extends React.Component {
-  static defaultProps = {
-    containerWidth: Dimensions.get('window').width,
-    initialPage: 0,
-    onScroll: () => {}
-  }
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      currentPage: {},
-      scrollValue: new Animated.Value(this.props.initialPage)
-    }
-  }
-
-  updateScrollValue = (value) => {
-    this.state.scrollValue.setValue(value)
-    this.props.onScroll(value)
-  }
-
-
-  render() {
-    const {props, select} = this.props
-
-    const children = Children.toArray(this.props.children)
-    return (
-      <ScrollView
-        {...props}
-        horizontal
-        pagingEnable
-        showsHorizontalScrollIndicator={false}
-        ref={scrollView => {this.scrollView = scrollView}}
-        onScroll={e => {
-          const offsetX = e.nativeEvent.contentOffset.x
-          this.updateScrollValue(offsetX / this.props.containerWidth)
-        }}>
-        {Children.map(children, (child, i) => {
-          const isSelected = select === i
-          return React.cloneElement(child, {isSelected})
-        })}
-      </ScrollView>
-    )
-  }
-}
-
-
 const Item = (props) => {
-  const {theme, changeTheme,label, isSelected} = props
-  const {color, baseColor, themeColor} = theme
+  const {theme, changeTheme,name, index, offsetX, isSelected} = props
+  const {color, baseColor, themeColor, img} = theme
+
+  const baesStyle={ width: screen.width - offsetX}
+  const activeStyle = { width: screen.width - offsetX - 40}
 
   return (
-    <View
-      delayPressIn={50}
-      style={[styles.TouchItem, {backgroundColor: `rgba(${color}, 1)`}, isSelected && { width: screen.width - 60, height: 420}]}>
-      <View>
-        <Text style={{ color: 'white', fontSize: 20}}>{label}</Text>
-      </View>
+    <View style={[styles.TouchItem, baesStyle]}>
+      <Image source={img} resizeMode='contain' style={{width: isSelected ? screen.width - ( offsetX / 2) - 30  : screen.width - ( offsetX / 2) - 60}}/>
     </View>
   )
 }
@@ -161,14 +114,10 @@ const styles = StyleSheet.create({
   },
   TouchItem: {
     flex: 1,
-		height: 400,
     borderRadius: 20,
-    width: screen.width - 80,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
-		justifyContent: "center",
   },
   ItemText: {
     marginLeft: 10
