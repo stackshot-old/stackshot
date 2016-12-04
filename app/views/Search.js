@@ -23,7 +23,7 @@ import {obj2query} from '../utils'
     const {
       entities:{shots},
       pagination: { allsearchs },
-      theme: {activeTheme},
+      theme: {themeColor},
       search: {isSearch}
     } = state
     const {query, content} = props
@@ -31,7 +31,7 @@ import {obj2query} from '../utils'
     const relatedShot  = searchPagination.ids.map(id => shots[id]);
     return {
       relatedShot,
-      activeTheme,
+      themeColor,
       isSearch,
       content,
       query,
@@ -40,6 +40,10 @@ import {obj2query} from '../utils'
   dispatch => bindActionCreators({handleActionChange, getSearchs, resetSearch, toggleSearch},dispatch)
 )
 export default class Search extends React.Component {
+
+  static contextTypes = {
+    app: PropTypes.object.isRequired,
+  }
 
   onEndReached = () => {
     const {getSearchs, query} = this.props
@@ -55,18 +59,18 @@ export default class Search extends React.Component {
   }
 
   render() {
-    const {relatedShot, activeTheme, content} = this.props
+    const {relatedShot, themeColor, content} = this.props
     let ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2,
     })
     let dataSource = ds.cloneWithRows(relatedShot)
     return (
       <View style={{flex: 1}}>
-        <StatusBar backgroundColor={`rgb(${activeTheme})`} animated={true}/>
-        <View style={{position: 'absolute', height: 300, width:screen.width, backgroundColor: `rgb(${activeTheme})`}}></View>
+        <StatusBar backgroundColor={`rgb(${themeColor})`} animated={true}/>
+        <View style={{position: 'absolute', height: 300, width:screen.width, backgroundColor: `rgb(${themeColor})`}}></View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10,}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon name="arrow-back" color="white" size={25} style={{marginHorizontal:10}}/><Text style={{color: 'white'}}>{` “${content}” 的搜索结果`}</Text>
+            <Icon name="arrow-back" color="white" size={25} style={{marginHorizontal:10}} onPress={() => {this.context.app.navigator.pop()}}/><Text style={{color: 'white'}}>{` “${content}” 的搜索结果`}</Text>
           </View>
           <Icon name="search" color="white" size={25} style={{marginHorizontal:10}} onPress={() => this.handleSearch()}/>
         </View>
@@ -76,7 +80,7 @@ export default class Search extends React.Component {
           onEndReachedThreshold={30}
           contentContainerStyle={{paddingHorizontal: 10, paddingTop: 10}}
           onEndReached={()=> this.onEndReached()}
-          renderRow={item => <Card item={item} activeTheme={activeTheme}/>}
+          renderRow={item => <Card item={item} themeColor={themeColor}/>}
           />
       </View>
     )

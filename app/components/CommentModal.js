@@ -24,11 +24,11 @@ const screen = Dimensions.get('window')
 @connect(
   state => {
     const {
-      theme: {activeTheme},
+      theme: {themeColor},
       comment: {isComment, content, parent, replyTo, placeholder}
     } = state
     return {
-      activeTheme,
+      themeColor,
       placeholder,
       isComment,
       content,
@@ -56,17 +56,17 @@ export default class CommentModal extends Component {
   }
 
   render() {
-    const {activeTheme, isComment, handleActionChange, placeholder} = this.props
+    const {themeColor, isComment, handleActionChange, placeholder} = this.props
     return (
       <Modal isopen={isComment}>
         <View style={{marginTop: 60, marginHorizontal: 10}}>
           <View style={{backgroundColor:'white' , minHeight: 10, borderTopLeftRadius: 4, borderTopRightRadius:4, paddingHorizontal: 10, paddingVertical: 10}}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <TouchableOpacity onPress={::this.handleToggle}>
-                <Icon name="close" color={`rgb(${activeTheme})`} size={30}/>
+                <Icon name="close" color={`rgb(${themeColor})`} size={30}/>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.handleSend()}>
-                <Icon name="send" color={`rgb(${activeTheme})`} size={30} style={{transform:[{rotate:"-35deg"}]}}/>
+                <Icon name="send" color={`rgb(${themeColor})`} size={30} style={{transform:[{rotate:"-35deg"}]}}/>
               </TouchableOpacity>
             </View>
           </View>

@@ -17,7 +17,8 @@ export default class LazyList extends React.Component {
     datas: [],
     limit: 3,
     showEmpty: false,
-    loadmoreLabel: '更多评论'
+    loadmoreLabel: '更多评论',
+    show: true
   }
 
   constructor(props) {
@@ -47,10 +48,13 @@ export default class LazyList extends React.Component {
 
   render() {
     const {page} = this.state
-    const {datas, limit, loadMore, loadmoreLabel, showEmpty, style} = this.props
+    const {datas, limit, loadMore, loadmoreLabel, showEmpty, style, show} = this.props
     const overCount = datas.length - limit * page
     const isEmpty = datas.length === 0
 
+    if(!show){
+      return <View></View>
+    }
 
     if(showEmpty && isEmpty){
       if(this.props.onEmpty){return onEmpty}

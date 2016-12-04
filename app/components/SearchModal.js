@@ -27,7 +27,7 @@ const screen = Dimensions.get('window')
     const {
       entities:{shots},
       pagination: { allsearchs },
-      theme: {activeTheme},
+      theme: {themeColor},
       search: {isSearch, content}
     } = state
     const query = obj2query({
@@ -35,9 +35,11 @@ const screen = Dimensions.get('window')
     })
     const searchPagination = allsearchs[query] || { ids: [] }
     const relatedShot  = searchPagination.ids.map(id => shots[id]);
+    const {isFetching} = searchPagination
     return {
       relatedShot,
-      activeTheme,
+      themeColor,
+      isFetching,
       isSearch,
       content,
       query,
@@ -77,21 +79,23 @@ export default class CommentModal extends Component {
   }
 
   render() {
-    const {activeTheme, content, isSearch, handleActionChange, relatedShot} = this.props
+    const {themeColor, content, isSearch, isFetching, handleActionChange, relatedShot} = this.props
+
     return (
       <Modal isopen={isSearch}>
         <View style={styles.container}>
           <View style={{marginTop: 20, paddingHorizontal: 10, marginHorizontal: 10,height: 50, borderRadius: 5, backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <TextInput onChangeText={(text) => {handleActionChange('search',{content: text})}} style={{flex: 1, color: 'rgb(114,122,126)'}} underlineColorAndroid={'transparent'} autoFocus={true}/>
-            <Icon onPress={() => this.handleSearch()} name="search" color={`rgb(${activeTheme})`} size={25} style={styles.Search}/>
+            <Icon onPress={() => this.handleSearch()} name="search" color={`rgb(${themeColor})`} size={25} style={styles.Search}/>
           </View>
           <LazyList
             limit={3}
-            datas={relatedShot}
+            show={isFetching === false ? true : false}
             showEmpty={true}
+            datas={relatedShot}
             loadMore={() => { return (<View style={{ flex: 1, alignItems: 'center', paddingVertical: 10, justifyContent: 'center'}}><Text onPress={()=> this.navigateToSearch()} style={{color: 'rgb(197,198,204)'}}>更多图槽</Text></View>)}}
             style={{flex: 0 , justifyContent: 'space-between', marginTop: 10, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20, marginHorizontal: 10, borderRadius: 5, }}>
-            <Item match={content} activeTheme={activeTheme}/>
+            <Item match={content} themeColor={themeColor} onPress={this.handleToggle}/>
           </LazyList>
         </View>
       </Modal>
@@ -100,16 +104,18 @@ export default class CommentModal extends Component {
 }
 
 const Item = (props, context) => {
-  const {match, activeTheme} = props
+  const {match, themeColor, onPress} = props
   const {app:{navigator}} = context
   const {content, id, images} = props.item
   const index = content.indexOf(match)
   if(index > 0){
     return (
-      <TouchableOpacity style={{ paddingVertical: 10, flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigator.push({ name: 'shot', params:{id}})}}>
+      <TouchableOpacity style={{ paddingVertical: 10, flexDirection: 'row', alignItems: 'center' }} onPress={() => {
+          onPress()
+          navigator.push({ name: 'shot', params:{id}})}}>
         <Text style={{flex: 1, color: 'rgb(114,122,126)'}}>
           {content.substring(0, index)}
-          <Text style={{color: `rgb(${activeTheme})` }}>{content.substring(index, index + match.length)}</Text>
+          <Text style={{color: `rgb(${themeColor})` }}>{content.substring(index, index + match.length)}</Text>
           {content.substring(index+ match.length, 20)}
           {content.length > 20 && '...'}
         </Text>

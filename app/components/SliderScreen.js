@@ -21,10 +21,11 @@ import {logout} from '../actions'
   state => {
     const {
       auth: {user},
-      theme: {activeTheme}
+      theme: {themeColor, baseColor}
     } = state
     return {
-      activeTheme,
+      themeColor,
+      baseColor,
       user
     }
   },
@@ -43,14 +44,24 @@ export default class SliderScreen extends Component {
   }
 
   handleSelected = (index) => {
-    const {navigator, drawer} = this.context.app
+    const {navigator, drawer, checkAuth} = this.context.app
     this.setState({ activeIndex: index })
     switch (index) {
       case 0:
-        navigator.push({name: 'home'})
+        navigator.immediatelyResetRouteStack([{name: 'home'}])
+        break
+      case 1:
+        if(checkAuth()){
+          navigator.immediatelyResetRouteStack([{name: 'home'},{name: 'profiles'}])
+        }
         break
       case 2:
-        navigator.push({name: 'theme'})
+        navigator.immediatelyResetRouteStack([{name: 'home'},{name: 'theme'}])
+        break
+      case 3:
+        if(checkAuth()){
+          navigator.immediatelyResetRouteStack([{name: 'home'},{name: 'setting'}])
+        }
         break
       default:
         return
@@ -58,12 +69,15 @@ export default class SliderScreen extends Component {
     drawer.closeDrawer()
   }
 
-  handlePressAvatar = () => {
+  handlePressAvatar = (uid) => {
     const {checkAuth, navigator, drawer} = this.context.app
     if(checkAuth()){
       drawer.closeDrawer()
       navigator.push({
-        name: 'user'
+        name: 'user',
+        params:{
+          uid
+        }
       })
     }
   }
@@ -95,28 +109,28 @@ export default class SliderScreen extends Component {
 
   render() {
     const {activeIndex} = this.state
-    const {activeTheme, user} = this.props
+    const {themeColor, baseColor, user} = this.props
     const {username, avatar} = user
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: `rgb(${baseColor})`}}>
       <View style={styles.Container}>
         <View style={styles.SliderHD}>
-          <TouchableOpacity onPress={() => this.handlePressAvatar()}>
+          <TouchableOpacity onPress={() => this.handlePressAvatar(user.id)}>
             <Avatar source={{uri: avatar ? avatar : 'http://p1.bpimg.com/4851/e7e901c31ded46ed.jpg'}} size={100} style={{marginTop: 50}}/>
           </TouchableOpacity>
           <Text>{username ? username : 'Miku'}</Text>
         </View>
         <View style={styles.SliderMD}>
-          <Item icon='favorite' text="我的图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} activeTheme={activeTheme}/>
-          <Item icon='person' text="资料设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} activeTheme={activeTheme}/>
-          <Item icon='color-lens' text="主题切换" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} activeTheme={activeTheme}/>
-          <Item icon='settings' text="系统设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={3} activeTheme={activeTheme}/>
-          <Item icon='info' text="关于图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={4} activeTheme={activeTheme}/>
+          <Item icon='favorite' text="我的图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={0} themeColor={themeColor}/>
+          <Item icon='person' text="资料设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={1} themeColor={themeColor}/>
+          <Item icon='color-lens' text="主题切换" handleSelected={this.handleSelected} activeIndex={activeIndex} index={2} themeColor={themeColor}/>
+          <Item icon='settings' text="系统设置" handleSelected={this.handleSelected} activeIndex={activeIndex} index={3} themeColor={themeColor}/>
+          <Item icon='info' text="关于图槽" handleSelected={this.handleSelected} activeIndex={activeIndex} index={4} themeColor={themeColor}/>
         </View>
         <View style={styles.SliderFT}>
           <TouchableOpacity
             onPress={() => this.handleLogOut()}>
-            <Text style={{color: `rgb(${activeTheme})`}}>登出</Text>
+            <Text style={{color: `rgb(${themeColor})`}}>登出</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -133,16 +147,16 @@ class Item extends Component {
   }
 
   render() {
-    const {icon, text, ouTouch, index, activeIndex, activeTheme} = this.props
+    const {icon, text, ouTouch, index, activeIndex, themeColor} = this.props
     return (
       <TouchableNativeFeedback
         delayPressIn={50}
-        background={TouchableNativeFeedback.Ripple(`rgb(${activeTheme})`)}
+        background={TouchableNativeFeedback.Ripple(`rgb(${themeColor})`)}
         style={[styles.TouchItem]}
         onPress={() => this.onPress()}>
-        <View style={[styles.ItemView,{backgroundColor: activeIndex === index ? `rgba(${activeTheme}, 0.1)` : 'transparent'}]}>
-          <Icon name={icon} size={20} color={activeIndex === index ? `rgb(${activeTheme})` : 'rgb(151,176,200)'}/>
-          <Text style={[styles.ItemText, { color: activeIndex === index ? `rgb(${activeTheme})` : 'rgb(151,176,200)'}]}>{text}</Text>
+        <View style={[styles.ItemView,{backgroundColor: activeIndex === index ? `rgba(${themeColor}, 0.1)` : 'transparent'}]}>
+          <Icon name={icon} size={20} color={activeIndex === index ? `rgb(${themeColor})` : 'rgb(151,176,200)'}/>
+          <Text style={[styles.ItemText, { color: activeIndex === index ? `rgb(${themeColor})` : 'rgb(151,176,200)'}]}>{text}</Text>
         </View>
       </TouchableNativeFeedback>
     )

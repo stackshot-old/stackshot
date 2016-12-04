@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  StatusBar,
   LayoutAnimation,
   TouchableOpacity
 } from 'react-native';
@@ -17,20 +18,20 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 
 // Components
-import {HomeShots, FloatButton, ToolBar, ShotModal, CommentModal} from '../components';
+import {HomeShots, FloatButton, ToolBar, ShotModal} from '../components';
 
 const screen = Dimensions.get('window')
 
 @connect(
   state => {
     const {
-      theme: {activeTheme},
+      theme: {themeColor},
       shot: {isShot},
       comment: {isComment},
       socket: {newShot}
     } = state
     return {
-      activeTheme,
+      themeColor,
       isComment,
       newShot,
       isShot
@@ -48,7 +49,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {activeTheme, isShot, isComment, newShot} = this.props
+    const {themeColor, isShot, isComment, newShot} = this.props
     const {count} = newShot
     return (
       <View style={{flex: 1}}>
@@ -56,8 +57,7 @@ export default class Home extends Component {
         {count > 0 && <View><Text>{`有新的帖子(${count})`}</Text></View>}
         <HomeShots />
         <ShotModal />
-        <CommentModal />
-        {(!isShot && !isComment) &&  <FloatButton icon={<Icon name="add" color={'white'} size={30}/>} bottom={20} right={20} size={60} color={`rgb(${activeTheme})`} onPress={::this.handleToggle}/>}
+        {(!isShot && !isComment) &&  <FloatButton icon={<Icon name="add" color={'white'} size={30}/>} bottom={20} right={20} size={60} color={`rgb(${themeColor})`} onPress={::this.handleToggle}/>}
       </View>
     );
   }

@@ -20,7 +20,7 @@ import {List, Card} from '../components'
     const {
       pagination: { allshots },
       entities: {shots},
-      theme: {activeTheme}
+      theme: {themeColor,baseColor}
     } = state
 
     const query = obj2query({
@@ -30,7 +30,8 @@ import {List, Card} from '../components'
     const relatedShot  = shotsPagination.ids.map(id => shots[id]);
 
     return {
-      activeTheme,
+      themeColor,
+      baseColor,
       relatedShot,
       query
     }
@@ -55,21 +56,21 @@ export default class HomeShots extends Component {
   }
 
   render() {
-    const {relatedShot, activeTheme} = this.props
+    const {relatedShot, themeColor, baseColor} = this.props
     const Loading = ({text}) => <Text>{text}</Text>
     let ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2,
     })
     let dataSource = ds.cloneWithRows(relatedShot)
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: `rgba(${baseColor}, 0.9)`}}>
         <ListView
           dataSource={dataSource}
           enableEmptySections={true}
           onEndReachedThreshold={30}
           contentContainerStyle={{paddingHorizontal: 10, paddingTop: 10}}
           onEndReached={()=> this.onEndReached()}
-          renderRow={item => <Card item={item} activeTheme={activeTheme}/>}
+          renderRow={item => <Card item={item} themeColor={themeColor}/>}
           />
       </View>
     )

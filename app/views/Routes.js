@@ -13,10 +13,15 @@ import {
 } from 'react-native';
 
 // views
-import {Home, Signin, User, ShotDetail, Message, Found, Signup, Theme, Search} from '../views'
-import {SliderScreen, StatusBar, SearchModal} from '../components'
-import {handleActionChange, connectWebScoket} from '../actions'
+import {Home, User, ShotDetail, Message, Found, SignInAndSignUp, Theme, Search, Profiles, Setting} from '../views'
+import {SliderScreen, StatusBar, SearchModal, CommentModal} from '../components'
+import {handleActionChange, startConnect, onNewShot, connectSuccess, connectFailed, disConnect} from '../actions'
 import {API_ROOT} from '../middleware/api'
+import io from "socket.io-client/socket.io"
+
+window.navigator.userAgent = 'react-native'
+
+
 
 @connect(
   state => {
@@ -33,14 +38,18 @@ import {API_ROOT} from '../middleware/api'
       user
     }
   },
-  dispatch => bindActionCreators({handleActionChange, connectWebScoket},dispatch)
+  dispatch => bindActionCreators({handleActionChange, startConnect, onNewShot, connectSuccess, connectFailed, disConnect},dispatch)
 )
 export default class Routes extends Component {
 
-  componentWillMount() {
-    this.initAuthUser()
-    this.initTheme()
-    this.props.connectWebScoket()
+  componentWillMount = async () => {
+    this.socket = io(`${API_ROOT}`,{transports: ['websocket'], jsonp: false})
+    const user = await this.initAuthUser()
+    if(user){
+      this.socket.emit('channel', {uid: user.id})
+    }
+    await this.initTheme()
+    await this.connectWebScoket()
 		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true)
 		BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid)
 	}
@@ -50,14 +59,40 @@ export default class Routes extends Component {
     const user = await AsyncStorage.getItem('user')
     if(user) {
       handleActionChange('auth',{user: JSON.parse(user)})
+      return JSON.parse(user)
     }
+  }
+
+  connectWebScoket = () => {
+    const {onNewShot, startConnect, connectSuccess, connectFailed, disConnect} = this.props
+  	this.socket.connect()
+  	this.socket.on('new-shot', (data) => {
+  		onNewShot(data)
+  	})
+    this.socket.on('connect', () => {
+      connectSuccess()
+    })
+    this.socket.on('error',(err) => {
+      connectFailed(err)
+    })
+    this.socket.on('connect_error',(err) => {
+      connectFailed(err)
+    })
+    this.socket.on('disconnect',() => {
+      disConnect()
+    })
+    this.socket.on('message', (data)=> {
+      alert(data)
+    })
+
   }
 
   initTheme = async () => {
     const {handleActionChange} = this.props
     const theme = await AsyncStorage.getItem('storeTheme')
     if(theme) {
-      handleActionChange('theme',{activeTheme: theme, storeTheme: theme})
+      const {baseColor, themeColor} = JSON.parse(theme)
+      handleActionChange('theme',{themeColor, baseColor})
     }
   }
 
@@ -102,9 +137,8 @@ export default class Routes extends Component {
         case 'home' :
           return <Home {...route.params} />
         case 'signin':
-          return <Signin {...route.params}/>
         case 'signup':
-          return <Signup {...route.params}/>
+          return <SignInAndSignUp {...route.params}/>
         case 'user':
           return <User {...route.params}/>
         case 'shot':
@@ -117,6 +151,10 @@ export default class Routes extends Component {
           return <Theme {...route.params}/>
         case 'search':
           return <Search {...route.params}/>
+        case 'profiles':
+          return <Profiles {...route.params}/>
+        case 'setting':
+          return <Setting {...route.params}/>
         default:
           return <View />;
       }
@@ -156,6 +194,7 @@ export default class Routes extends Component {
             }} />
         </DrawerLayoutAndroid>
         <SearchModal/>
+        <CommentModal />
       </Provider>
     );
   }

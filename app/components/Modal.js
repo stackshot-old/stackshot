@@ -22,9 +22,9 @@ const screen = Dimensions.get('window')
 
 @connect(
   state => {
-    const {theme: {activeTheme}} = state
+    const {theme: {themeColor}} = state
     return {
-      activeTheme
+      themeColor
     }
   }
 )
@@ -34,7 +34,7 @@ export default class Modal extends Component {
   }
 
   render() {
-    const {isopen, activeTheme, children, style, } = this.props
+    const {isopen, themeColor, children, style, } = this.props
 
     const size = {width: screen.width, height: screen.height}
 

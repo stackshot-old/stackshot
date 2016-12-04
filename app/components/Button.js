@@ -11,9 +11,9 @@ import {connect} from 'react-redux'
 
 @connect(
   state => {
-    const {theme: {activeTheme}} = state
+    const {theme: {themeColor}} = state
     return {
-      activeTheme
+      themeColor
     }
   }
 )
@@ -26,8 +26,8 @@ export default class Button extends Component {
   }
 
   render() {
-    const {active, icon, label, onPress, activeTheme} = this.props
-    const color = active ? `rgb(${activeTheme})` : 'rgb(153, 157, 175)'
+    const {active, icon, label, onPress, themeColor} = this.props
+    const color = active ? `rgb(${themeColor})` : 'rgb(153, 157, 175)'
     return (
       <TouchableOpacity onPress={() => onPress()} style={[styles.container,{borderColor: color}]}>
         {React.cloneElement(icon, {color})}

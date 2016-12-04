@@ -27,6 +27,22 @@ const pagination = combineReducers({
       ActionTypes.GET_SEARCHS_SUCCESS,
       ActionTypes.GET_SEARCHS_FAILURE,
     ]
+  }),
+  allcomments: paginate({
+    mapActionToKey: action => action.query,
+    types: [
+      ActionTypes.GET_COMMENTS_REQUEST,
+      ActionTypes.GET_COMMENTS_SUCCESS,
+      ActionTypes.GET_COMMENTS_FAILURE
+    ]
+  }),
+  allmessages: paginate({
+    mapActionToKey: action => action.query,
+    types: [
+      ActionTypes.GET_MESSAGES_REQUEST,
+      ActionTypes.GET_MESSAGES_SUCCESS,
+      ActionTypes.GET_MESSAGES_FAILURE
+    ]
   })
 })
 

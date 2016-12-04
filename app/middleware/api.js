@@ -2,12 +2,12 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-export const API_ROOT = `http://192.168.5.7:7999`
+export const API_ROOT = `http://192.168.5.8:7999`
 
 
-// Extracts the next page URL from Github API response.
+// Extracts the nexts page URL from Github API response.
 function getBeforeTime(response, json) {
-  if(Array.isArray(json)){
+  if(Array.isArray(json) && json.length > 0){
     const {createdAt} = json.slice(-1)[0]
     if(createdAt){
       return createdAt
@@ -27,7 +27,6 @@ function callApi(endpoint, schema, request) {
       if (!response.ok) {
         return Promise.reject(json)
       }
-
       const camelizedJson = camelizeKeys(json)
       const before = getBeforeTime(response, json)
       return Object.assign({},
@@ -61,11 +60,18 @@ const commentSchema = new Schema('comments', {
   idAttribute: 'id'
 })
 
+const messageSchema = new Schema('messages', {
+  idAttribute: 'id'
+})
+
 shotSchema.define({
   user: userSchema,
   latestComment: arrayOf(commentSchema)
 })
 
+commentSchema.define({
+  user: userSchema,
+})
 
 export const Schemas = {
   USER: userSchema,
@@ -74,7 +80,9 @@ export const Schemas = {
   SHOT: shotSchema,
   SHOT_ARRAY: arrayOf(shotSchema),
   COMMENT: commentSchema,
-  COMMENT_ARRAY: arrayOf(commentSchema)
+  COMMENT_ARRAY: arrayOf(commentSchema),
+  MESSAGE: messageSchema,
+  MESSAGE_ARRAY: arrayOf(messageSchema)
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
