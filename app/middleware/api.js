@@ -2,7 +2,7 @@ import { Schema, arrayOf, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
 import Symbol from 'es6-symbol'
 
-export const API_ROOT = `http://192.168.5.7:7999`
+export const API_ROOT = `http://192.168.5.8:7999`
 
 
 // Extracts the nexts page URL from Github API response.
@@ -60,6 +60,10 @@ const commentSchema = new Schema('comments', {
   idAttribute: 'id'
 })
 
+const messageSchema = new Schema('messages', {
+  idAttribute: 'id'
+})
+
 shotSchema.define({
   user: userSchema,
   latestComment: arrayOf(commentSchema)
@@ -76,7 +80,9 @@ export const Schemas = {
   SHOT: shotSchema,
   SHOT_ARRAY: arrayOf(shotSchema),
   COMMENT: commentSchema,
-  COMMENT_ARRAY: arrayOf(commentSchema)
+  COMMENT_ARRAY: arrayOf(commentSchema),
+  MESSAGE: messageSchema,
+  MESSAGE_ARRAY: arrayOf(messageSchema)
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
